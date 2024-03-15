@@ -534,6 +534,9 @@ def bottomsRender(bottoms_items, bottoms_materials, scene_name, output, overwrit
             # Render!
             renderTime(overwrite, singleFrame, startFrame, endFrame)
 
+            # Set material index to +1
+            material_index = material_index + 1
+
             if material_index < len(bottoms_materials):
                 continue
             else:
@@ -645,6 +648,9 @@ def shoesRender(shoes_items, shoes_materials, scene_name, output, overwrite = Fa
             # Render!
             renderTime(overwrite, singleFrame, startFrame, endFrame)
 
+            # Set material index to +1
+            material_index = material_index + 1
+            
             if material_index < len(shoes_materials):
                 continue
             else:
