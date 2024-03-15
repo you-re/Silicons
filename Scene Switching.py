@@ -132,7 +132,7 @@ def sceneSwitch(switch_to_scene, scenes, switch_to_length, collections, scene_nu
     bpy.context.scene.frame_end = switch_to_length
 
 # Render functions
-def skinRender(skins_materials, scene_name):
+def skinRender(skins_materials, scene_name, singleFrame = False, startFrame = 1, endFrame = bpy.context.scene.frame_end):
     # Important objects
     silicon_obj = "Silicon Skin " + scene_name
     eyes_obj = "Silicon Eyes " + scene_name
@@ -167,12 +167,12 @@ def skinRender(skins_materials, scene_name):
         bpy.context.scene.render.filepath = output_path
         
         # Render!
-        bpy.ops.render.render(animation = True)
+        renderTime(singleFrame, startFrame, endFrame)
     
     # Set the material back to the original one
     bpy.data.objects[silicon_obj].data.materials[0] = bpy.data.materials[original_mat]
 
-def eyesRender(eyes_materials, scene_name):
+def eyesRender(eyes_materials, scene_name, singleFrame = False, startFrame = 1, endFrame = bpy.context.scene.frame_end):
     # Important objects
     silicon_obj = "Silicon Skin " + scene_name
     eyes_obj = "Silicon Eyes " + scene_name
@@ -210,7 +210,7 @@ def eyesRender(eyes_materials, scene_name):
         bpy.context.scene.render.filepath = output_path
         
         # Render!
-        bpy.ops.render.render(animation = True)
+        renderTime(singleFrame, startFrame, endFrame)
     
     # Set the material back to the original one
     bpy.data.objects[eyes_obj].data.materials[0] = bpy.data.materials[original_mat]
@@ -218,7 +218,7 @@ def eyesRender(eyes_materials, scene_name):
     # Disable compositor
     bpy.context.scene.use_nodes = False
 
-def headwearRender(headwear_items, headwear_materials, scene_name):
+def headwearRender(headwear_items, headwear_materials, scene_name, singleFrame = False, startFrame = 1, endFrame = bpy.context.scene.frame_end):
     # Important objects
     silicon_obj = bpy.data.objects["Silicon Skin " + scene_name]
     eyes_obj = bpy.data.objects["Silicon Eyes " + scene_name]
@@ -269,7 +269,7 @@ def headwearRender(headwear_items, headwear_materials, scene_name):
             bpy.context.scene.render.filepath = output_path
             
             # Render!
-            bpy.ops.render.render(animation = True)
+            renderTime(singleFrame, startFrame, endFrame)
 
             # Set material index to +1
             material_index = material_index + 1
@@ -307,7 +307,7 @@ def headwearRender(headwear_items, headwear_materials, scene_name):
         bpy.context.scene.render.filepath = output_path
 
         # Render!
-        bpy.ops.render.render(animation = True)
+        renderTime(singleFrame, startFrame, endFrame)
 
         # Restore the original material
         headwear_obj.data.materials[0] = original_mat
@@ -315,7 +315,7 @@ def headwearRender(headwear_items, headwear_materials, scene_name):
         # Hide the item
         headwear_obj.hide_render = True
 
-def outerwearRender(outerwear_items, outerwear_materials, scene_name):
+def outerwearRender(outerwear_items, outerwear_materials, scene_name, singleFrame = False, startFrame = 1, endFrame = bpy.context.scene.frame_end):
     # Important objects
     silicon_obj = bpy.data.objects["Silicon Skin " + scene_name]
     eyes_obj = bpy.data.objects["Silicon Eyes " + scene_name]
@@ -377,8 +377,7 @@ def outerwearRender(outerwear_items, outerwear_materials, scene_name):
             bpy.context.scene.render.filepath = output_path
             
             # Render!
-            bpy.ops.render.render(animation = True)
-
+            renderTime(singleFrame, startFrame, endFrame)
             # Turn off the fur
             if(material_name == "Puffer Ice Fur"):
                 outerwear_obj.modifiers["ParticleSystem"].show_render = False
@@ -419,7 +418,7 @@ def outerwearRender(outerwear_items, outerwear_materials, scene_name):
         bpy.context.scene.render.filepath = output_path
 
         # Render!
-        bpy.ops.render.render(animation = True)
+        renderTime(singleFrame, startFrame, endFrame)
 
         if outerwear_name == "Puffer":
             # Render Ice Fur Pufffer
@@ -430,7 +429,7 @@ def outerwearRender(outerwear_items, outerwear_materials, scene_name):
             output_path = "%s/%s/Outerwear Comp Masks/%s ####.png" % (output_path, scene_name, outerwear_name + " Comp Mask Fur")
 
             # Render!
-            bpy.ops.render.render(animation = True)
+            renderTime(singleFrame, startFrame, endFrame)
 
             # Disable fur from rendering
             outerwear_obj.modifiers["ParticleSystem"].show_render = True
@@ -443,7 +442,7 @@ def outerwearRender(outerwear_items, outerwear_materials, scene_name):
             output_path = "%s/%s/Outerwear Comp Masks/%s ####.png" % (output_path, scene_name, outerwear_name + " Wool Comp Mask")
 
             # Render!
-            bpy.ops.render.render(animation = True)
+            renderTime(singleFrame, startFrame, endFrame)
 
         if outerwear_name == "Puffer Vest":
             # Render wool puffer vest
@@ -454,7 +453,7 @@ def outerwearRender(outerwear_items, outerwear_materials, scene_name):
             output_path = "%s/%s/Outerwear Comp Masks/%s ####.png" % (output_path, scene_name, outerwear_name + " Wool Comp Mask")
 
             # Render!
-            bpy.ops.render.render(animation = True)
+            renderTime(singleFrame, startFrame, endFrame)
         
         # Restore the original material
         outerwear_obj.data.materials[0] = original_mat
@@ -465,7 +464,7 @@ def outerwearRender(outerwear_items, outerwear_materials, scene_name):
     # Deactivate mask object
     pants_mask.hide_render = True
 
-def bottomsRender(bottoms_items, bottoms_materials, scene_name):
+def bottomsRender(bottoms_items, bottoms_materials, scene_name, singleFrame = False, startFrame = 1, endFrame = bpy.context.scene.frame_end):
     # Important objects
     silicon_obj = bpy.data.objects["Silicon Skin " + scene_name]
     eyes_obj = bpy.data.objects["Silicon Eyes " + scene_name]
@@ -524,7 +523,7 @@ def bottomsRender(bottoms_items, bottoms_materials, scene_name):
             bpy.context.scene.render.filepath = output_path
             
             # Render!
-            bpy.ops.render.render(animation = True)
+            renderTime(singleFrame, startFrame, endFrame)
 
             # Set material index to +1
             material_index = material_index + 1
@@ -563,7 +562,7 @@ def bottomsRender(bottoms_items, bottoms_materials, scene_name):
         bpy.context.scene.render.filepath = output_path
 
         # Render!
-        bpy.ops.render.render(animation = True)
+        renderTime(singleFrame, startFrame, endFrame)
         
         # Restore the original material
         bottoms_obj.data.materials[0] = original_mat
@@ -575,7 +574,7 @@ def bottomsRender(bottoms_items, bottoms_materials, scene_name):
     shoes_L_mask.hide_render = True
     shoes_R_mask.hide_render = True
 
-def shoesRender(shoes_items, shoes_materials, scene_name):
+def shoesRender(shoes_items, shoes_materials, scene_name, singleFrame = False, startFrame = 1, endFrame = bpy.context.scene.frame_end):
     # Important objects
     silicon_obj = bpy.data.objects["Silicon Skin " + scene_name]
     eyes_obj = bpy.data.objects["Silicon Eyes " + scene_name]
@@ -633,7 +632,7 @@ def shoesRender(shoes_items, shoes_materials, scene_name):
             bpy.context.scene.render.filepath = output_path
             
             # Render!
-            bpy.ops.render.render(animation = True)
+            renderTime(singleFrame, startFrame, endFrame)
 
             # Set material index to +1
             material_index = material_index + 1
@@ -668,7 +667,7 @@ def shoesRender(shoes_items, shoes_materials, scene_name):
         bpy.context.scene.render.filepath = output_path
 
         # Render!
-        bpy.ops.render.render(animation = True)
+        renderTime(singleFrame, startFrame, endFrame)
         
         # Restore the original material
         shoes_obj.data.materials[0] = original_mat
@@ -679,7 +678,7 @@ def shoesRender(shoes_items, shoes_materials, scene_name):
     # Turn mask on
     silicon_obj.modifiers["Shoes Mask"].show_render = False
 
-def renderExtraObject(extra_objects, scene_name):
+def renderExtraObject(extra_objects, scene_name, singleFrame = False, startFrame = 1, endFrame = bpy.context.scene.frame_end):
     # Important objects
     silicon_obj = bpy.data.objects["Silicon Skin " + scene_name]
     eyes_obj = bpy.data.objects["Silicon Eyes " + scene_name]
@@ -710,10 +709,27 @@ def renderExtraObject(extra_objects, scene_name):
         bpy.context.scene.render.filepath = output_path
 
         # Render!
-        bpy.ops.render.render(animation = True)
+        renderTime(singleFrame, startFrame, endFrame)
         
         # Hide the object
         bpy.data.objects[object].hide_render = True    
+
+def renderTime(singleFrame = False, startFrame = 1, endFrame = bpy.context.scene.frame_end):
+    if singleFrame:
+        # Set current frame to startFrame
+        bpy.context.scene.frame_current = startFrame
+
+        # Fix output path to only the current frame
+        output_path = bpy.context.scene.render.filepath.replace("####", "{:04d}".format(startFrame))
+        bpy.context.scene.render.filepath = output_path
+        
+        # Render single frame
+        bpy.ops.render.render(animation = False, write_still = True)
+
+    # Normal render
+    bpy.context.scene.frame_start = startFrame
+    bpy.context.scene.frame_end = endFrame
+    bpy.ops.render.render(animation = True)
 
 # For every scene (0 ~ Wave 1 ~ Idle 2 ~ Strut Walk 3 ~ GM)
 for scene_num in range(4):
@@ -722,6 +738,11 @@ for scene_num in range(4):
     scene_name = scenes[scene_num]
     scene_length = scenes_length[scene_num]
 
+    # Render Settings
+    # Render single frame?
+    renderSingleFrame = True
+    # Where to start rendering - if render single frame this is the frame that will be rendered
+    renderFrame = 30
     # Switch to correct scene
     sceneSwitch(scene_name, scenes, scene_length, collections)
 
@@ -730,9 +751,9 @@ for scene_num in range(4):
         renderExtraObject(extra_objects, scene_name)
 
     # Render all the assets scripts
-    skinRender(skins_materials, scene_name)
-    eyesRender(eyes_materials, scene_name)
-    headwearRender(headwear_items, headwear_materials, scene_name)
-    outerwearRender(outerwear_items, outerwear_materials, scene_name)
-    bottomsRender(bottoms_items, bottoms_materials, scene_name)
-    shoesRender(shoes_items, shoes_materials, scene_name)
+    skinRender(skins_materials, scene_name, renderSingleFrame, renderFrame)
+    eyesRender(eyes_materials, scene_name, renderSingleFrame, renderFrame)
+    headwearRender(headwear_items, headwear_materials, scene_name, renderSingleFrame, renderFrame)
+    outerwearRender(outerwear_items, outerwear_materials, scene_name, renderSingleFrame, renderFrame)
+    bottomsRender(bottoms_items, bottoms_materials, scene_name, renderSingleFrame, renderFrame)
+    shoesRender(shoes_items, shoes_materials, scene_name, renderSingleFrame, renderFrame)
