@@ -351,7 +351,6 @@ def outerwearRender(outerwear_items, outerwear_materials, scene_name):
         outerwear_obj = bpy.data.objects[outerwear_name]
 
         # Setup the render item
-        outerwear_obj.hide_viewport = False
         outerwear_obj.hide_render = False
 
         # Store the original material
