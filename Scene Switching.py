@@ -731,6 +731,14 @@ def renderTime(singleFrame = False, startFrame = 1, endFrame = bpy.context.scene
     bpy.context.scene.frame_end = endFrame
     bpy.ops.render.render(animation = True)
 
+def disableItems(headwear_items, outerwear_items, bottoms_items, shoes_items, extra_objects):
+    all_items = headwear_items + outerwear_items + bottoms_items + shoes_items + extra_objects
+    for object in all_items:
+        bpy.data.objects[object].hide_render = True
+
+# Disable all items from rendering
+disableItems(headwear_items, outerwear_items, bottoms_items, shoes_items, extra_objects)
+
 # For every scene (0 ~ Wave 1 ~ Idle 2 ~ Strut Walk 3 ~ GM)
 for scene_num in range(4):
 
