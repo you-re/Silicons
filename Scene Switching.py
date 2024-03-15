@@ -228,8 +228,9 @@ def headwearRender(headwear_items, headwear_materials, scene_name, output, overw
     silicon_obj.is_shadow_catcher = False
 
     eyes_obj.hide_render = False
-    eyes_obj.is_holdout = False
+    eyes_obj.is_holdout = True
     eyes_obj.is_shadow_catcher = False
+    backdrop_obj.data.materials[0] = bpy.data.materials["Eyes White"]
 
     backdrop_obj.hide_render = False
     backdrop_obj.is_holdout = True
@@ -255,10 +256,6 @@ def headwearRender(headwear_items, headwear_materials, scene_name, output, overw
 
         # Render all the item / material combinations
         while headwear_name in material_name:
-
-            # Get the material name
-            material_name = headwear_materials[material_index]
-            
             # Set material!
             headwear_obj.data.materials[0] = bpy.data.materials[material_name]
             
@@ -273,7 +270,8 @@ def headwearRender(headwear_items, headwear_materials, scene_name, output, overw
             material_index = material_index + 1
 
             if material_index < len(headwear_materials):
-                continue
+                # Get the material name
+                material_name = headwear_materials[material_index]     
             else:
                 break
 
@@ -361,11 +359,7 @@ def outerwearRender(outerwear_items, outerwear_materials, scene_name, output, ov
         original_mat = outerwear_obj.data.materials[0].name
 
         # Render all the item / material combinations
-        while outerwear_name in material_name:
-
-            # Get the material name
-            material_name = outerwear_materials[material_index]
-            
+        while outerwear_name in material_name:            
             # Set material!
             outerwear_obj.data.materials[0] = bpy.data.materials[material_name]
 
@@ -390,7 +384,8 @@ def outerwearRender(outerwear_items, outerwear_materials, scene_name, output, ov
             material_index = material_index + 1
 
             if material_index < len(outerwear_materials):
-                continue
+                # Get the material name
+                material_name = outerwear_materials[material_index]
             else:
                 break
         
@@ -517,9 +512,6 @@ def bottomsRender(bottoms_items, bottoms_materials, scene_name, output, overwrit
 
         # Render all the item / material combinations
         while bottoms_name in material_name:
-
-            # Get the material name
-            material_name = bottoms_materials[material_index]
             
             # Set material!
             bottoms_obj.data.materials[0] = bpy.data.materials[material_name]
@@ -538,7 +530,8 @@ def bottomsRender(bottoms_items, bottoms_materials, scene_name, output, overwrit
             material_index = material_index + 1
 
             if material_index < len(bottoms_materials):
-                continue
+                # Get the material name
+                material_name = bottoms_materials[material_index]
             else:
                 break
         
@@ -630,11 +623,7 @@ def shoesRender(shoes_items, shoes_materials, scene_name, output, overwrite = Fa
         original_mat = shoes_obj.data.materials[0].name
 
         # Render all the item / material combinations
-        while shoes_name in material_name:
-
-            # Get the material name
-            material_name = shoes_materials[material_index]
-            
+        while shoes_name in material_name:            
             # Set material!
             shoes_obj.data.materials[0] = bpy.data.materials[material_name]
 
@@ -652,7 +641,8 @@ def shoesRender(shoes_items, shoes_materials, scene_name, output, overwrite = Fa
             material_index = material_index + 1
             
             if material_index < len(shoes_materials):
-                continue
+                # Get the material name
+                material_name = shoes_materials[material_index]
             else:
                 break
         
