@@ -12,12 +12,22 @@ scenes_length = [31, 284, 43, 100]
 collections = ["Outerwear", "Bottoms"]
 
 # Output folder
-output_path = "../silicons_render/"
+output_path = "../silicons_render"
 
 # Assets to render
-skins = ["Apricot", "Arabescato Marble", "Baby Blue", "Black Glass", "Carbon", "Charcoal", "Cherry Blossom", "Chrome", "Eggshell", "Gold", "Gun Metal", "Ice", "Invisible", "Jacaranda", "Lime", "Navy Glass", "Purple Glass", "Smoke", "Vanilla", "Wool", "Zebra Marble"]
+skins_materials = ["Apricot", "Arabescato Marble", "Baby Blue", "Black Glass", "Carbon", "Charcoal", "Cherry Blossom", "Chrome", "Eggshell", "Gold", "Gun Metal", "Ice", "Invisible", "Jacaranda", "Lime", "Navy Glass", "Purple Glass", "Smoke", "Vanilla", "Wool", "Zebra Marble"]
 
+eyes_materials = ["Electric", "Apple", "Grape", "White", "Hot Pink", "Ice Blue", "Tangerine", "Red", "Teal", "Black", "Lavender", "Peach", "Pistachio", "Baby Pink", "Grey"]
 
+headwear_items = ["Fur Bucket", "Beanie", "Visor", "Headphones", "Denim Cap", "A Cap", "Babushka", "Flat Cap", "Backwards Cap", "Balaclava", "Cowboy Hat"]
+
+headwear_materials = ["Fur Bucket Eggshell", "Fur Bucket Purple", "Fur Bucket Black", "Fur Bucket Ice", "Fur Bucket Pistachio", "Beanie Pink", "Beanie Purple", "Beanie Blue", "Beanie Black", "Visor Chrome", "Visor Carbon", "Headphones Silver", "Headphones Black", "Denim Cap Black", "Denim Cap Blue", "A Cap Black", "A Cap Eggshell", "A Cap Purple", "A Cap Blue", "A Cap Pistachio", "Babushka Eggshell", "Babushka Doodles", "Babushka Black", "Babushka Floral", "Flat Cap Eggshell", "Flat Cap Black", "Flat Cap Pistachio", "Flat Cap Blue", "Flat Cap Purple", "Backwards Cap Eggshell", "Backwards Cap Black", "Backwards Cap Pistachio", "Backwards Cap Blue", "Backwards Cap Purple", "Balaclava Eggshell", "Balaclava Blue", "Balaclava Pistachio", "Balaclava Purple", "Balaclava Camo", "Cowboy Hat Black", "Cowboy Hat Eggshell"]
+
+outerwear_items = ["Bomber Jacket", "Bowler", "Burnout", "Button Down", "CAW Hoodie", "Cardigan", "Denim Jacket", "Flannel", "Fur Coat", "Hoodie", "NY Sweater", "Oversized T-Shirt", "Prep", "Puffer Vest", "Puffer", "Rugby Jersey", "Silicons FC", "Sweater", "T-Shirt", "Two-Tone", "V-Neck", "Varsity Jacket", "Vest"]
+
+outerwear_materials = ["Bomber Jacket Black", "Bomber Jacket Tan", "Bowler Black", "Bowler Crochet", "Bowler Eggshell", "Burnout Black", "Burnout Carbon", "Burnout Purple", "Burnout Red", "Burnout White", "Button Down Black", "Button Down Blue", "Button Down White", "CAW Hoodie Black", "CAW Hoodie Purple", "CAW Hoodie White", "Cardigan Black", "Cardigan Ice", "Cardigan Purple", "Denim Jacket Black", "Denim Jacket Blue", "Denim Jacket Chess", "Denim Jacket Salt Pan", "Flannel Barney", "Flannel Blue", "Flannel Tweed", "Fur Coat Ice", "Fur Coat Pistachio", "Fur Coat Purple", "Hoodie Black", "Hoodie Ice", "Hoodie Purple", "Hoodie White", "NY Sweater Black", "NY Sweater White", "Oversized T-Shirt Black", "Oversized T-Shirt Eggshell", "Oversized T-Shirt Grey", "Oversized T-Shirt Ice", "Oversized T-Shirt Purple", "Oversized T-Shirt White", "Prep Black", "Prep Eggshell", "Prep Ice Blue", "Prep Purple", "Prep Rose", "Puffer Vest Black", "Puffer Vest Ice", "Puffer Vest Purple", "Puffer Vest Purple Camo", "Puffer Vest Wool", "Puffer Black", "Puffer Gold", "Puffer Ice Fur", "Puffer Purple", "Puffer Wool", "Puffer Purple Camo", "Rugby Jersey Black", "Rugby Jersey Blue", "Rugby Jersey Pink", "Silicons FC - Alternate", "Silicons FC - Away", "Silicons FC - Home", "Sweater Black", "Sweater Duo", "Sweater Eggshell", "Sweater Ice", "Sweater Purple", "Sweater Purple Camo", "T-Shirt Crystal Ball", "T-Shirt Essential", "T-Shirt Flow", "T-Shirt GM", "T-Shirt Toly", "Two-Tone Black", "Two-Tone Blue", "Two-Tone Purple", "Two-Tone Rose", "V-Neck Black", "V-Neck Pistachio", "V-Neck White", "Varsity Jacket Black", "Varsity Jacket Tan", "Vest Blue", "Vest Purple", "Vest White"]
+
+# Scene switching functions
 def shoesSwitch(switch_to_scene, scenes):
     objects = ["Shoes Collision Box L", "Shoes Collision Box R"]
     for object_name in objects:
@@ -111,49 +121,354 @@ def sceneSwitch(switch_to_scene, scenes, switch_to_length, collections, scene_nu
     # Set end frame
     bpy.context.scene.frame_end = switch_to_length
 
-def skinRender(skins, scene_name):
+# Render functions
+def skinRender(skins_materials, scene_name):
     # Important objects
-    silicon = "Silicon Skin " + scene_name
-    eyes = "Silicon Eyes " + scene_name
-    backdrop = "Backdrop"
+    silicon_obj = "Silicon Skin " + scene_name
+    eyes_obj = "Silicon Eyes " + scene_name
+    backdrop_obj = "Backdrop"
     
     # Setup the scene properly
-    bpy.data.objects[silicon].hide_viewport = False
-    bpy.data.objects[silicon].hide_render = False
-    bpy.data.objects[silicon].is_holdout = False
-    bpy.data.objects[silicon].is_shadow_catcher = False
+    bpy.data.objects[silicon_obj].hide_viewport = False
+    bpy.data.objects[silicon_obj].hide_render = False
+    bpy.data.objects[silicon_obj].is_holdout = False
+    bpy.data.objects[silicon_obj].is_shadow_catcher = False
 
-    bpy.data.objects[backdrop].hide_viewport = False
-    bpy.data.objects[backdrop].hide_render = False
-    bpy.data.objects[backdrop].is_holdout = True
-    bpy.data.objects[backdrop].is_shadow_catcher = False
-    bpy.data.objects[backdrop].data.materials[0] = bpy.data.materials["Backdrop White"]
+    bpy.data.objects[backdrop_obj].hide_viewport = False
+    bpy.data.objects[backdrop_obj].hide_render = False
+    bpy.data.objects[backdrop_obj].is_holdout = True
+    bpy.data.objects[backdrop_obj].is_shadow_catcher = False
+    bpy.data.objects[backdrop_obj].data.materials[0] = bpy.data.materials["Backdrop White"]
 
-    bpy.data.objects[eyes].hide_viewport = True
-    bpy.data.objects[eyes].hide_render = True
-    bpy.data.objects[eyes].is_holdout = False
-    bpy.data.objects[eyes].is_shadow_catcher = False
+    bpy.data.objects[eyes_obj].hide_viewport = True
+    bpy.data.objects[eyes_obj].hide_render = True
+    bpy.data.objects[eyes_obj].is_holdout = False
+    bpy.data.objects[eyes_obj].is_shadow_catcher = False
 
     # Store the original material
-    original_mat = bpy.data.objects[silicon].data.materials[0].name
+    original_mat = bpy.data.objects[silicon_obj].data.materials[0].name
 
-    for skin in skins:
+    for skin_name in skins_materials:
         # Get material name
-        material_name = "Skin " + skin
+        material_name = "Skin " + skin_name
         
         # Set material!
-        bpy.data.objects[silicon].data.materials[0] = bpy.data.materials[material_name]
+        bpy.data.objects[silicon_obj].data.materials[0] = bpy.data.materials[material_name]
         
         # Set output path THIS MIGHT NOT WORK
-        output_path = "%s/%s/Skins/%s ####.png" % (output_path, scene_name, material_name)
+        output_path = "%s/%s/Skins/%s ####.png" % (output_path, scene_name, skin_name)
         bpy.context.scene.render.filepath = output_path
         
         # Render!
         bpy.ops.render.render(animation = True)
     
     # Set the material back to the original one
-    bpy.data.objects[silicon].data.materials[0] = bpy.data.materials[original_mat]
+    bpy.data.objects[silicon_obj].data.materials[0] = bpy.data.materials[original_mat]
 
+def eyesRender(eyes_materials, scene_name):
+    # Important objects
+    silicon_obj = "Silicon Skin " + scene_name
+    eyes_obj = "Silicon Eyes " + scene_name
+    backdrop_obj = "Backdrop"
+    
+    # Setup the scene properly
+    bpy.data.objects[backdrop_obj].hide_viewport = False
+    bpy.data.objects[backdrop_obj].hide_render = False
+    bpy.data.objects[backdrop_obj].is_holdout = True
+    bpy.data.objects[backdrop_obj].is_shadow_catcher = False
+    bpy.data.objects[backdrop_obj].data.materials[0] = bpy.data.materials["Backdrop White"]
+
+    bpy.data.objects[silicon_obj].hide_viewport = False
+    bpy.data.objects[silicon_obj].hide_render = False
+    bpy.data.objects[silicon_obj].is_holdout = True
+    bpy.data.objects[silicon_obj].is_shadow_catcher = False
+
+    bpy.data.objects[eyes_obj].hide_viewport = False
+    bpy.data.objects[eyes_obj].hide_render = False
+    bpy.data.objects[eyes_obj].is_holdout = False
+    bpy.data.objects[eyes_obj].is_shadow_catcher = False
+
+    # Enable compositor
+    bpy.context.scene.use_nodes = True
+
+    # Store the original material
+    original_mat = bpy.data.objects[eyes_obj].data.materials[0].name
+
+    for eyes_name in eyes_materials:
+        # Get material name
+        material_name = "Eyes " + eyes_name
+        
+        # Set material!
+        bpy.data.objects[eyes_obj].data.materials[0] = bpy.data.materials[material_name]
+        
+        # Set output path THIS MIGHT NOT WORK
+        output_path = "%s/%s/Eyes/%s ####.png" % (output_path, scene_name, eyes_name)
+        bpy.context.scene.render.filepath = output_path
+        
+        # Render!
+        bpy.ops.render.render(animation = True)
+    
+    # Set the material back to the original one
+    bpy.data.objects[eyes_obj].data.materials[0] = bpy.data.materials[original_mat]
+
+    # Disable compositor
+    bpy.context.scene.use_nodes = False
+
+def headwearRender(headwear_items, headwear_materials, scene_name):
+    # Important objects
+    silicon_obj = bpy.data.objects["Silicon Skin " + scene_name]
+    eyes_obj = bpy.data.objects["Silicon Eyes " + scene_name]
+    backdrop_obj = bpy.data.objects["Backdrop"]
+    
+    # Setup the scene properly
+    silicon_obj.hide_viewport = False
+    silicon_obj.hide_render = False
+    silicon_obj.is_holdout = True
+    silicon_obj.is_shadow_catcher = False
+
+    eyes_obj.hide_viewport = False
+    eyes_obj.hide_render = False
+    eyes_obj.is_holdout = False
+    eyes_obj.is_shadow_catcher = False
+
+    backdrop_obj.hide_viewport = False
+    backdrop_obj.hide_render = False
+    backdrop_obj.is_holdout = True
+    backdrop_obj.is_shadow_catcher = False
+    backdrop_obj.data.materials[0] = bpy.data.materials["Backdrop White"]
+
+    # Start the material index
+    material_index = 0
+
+    # Get the first material name
+    material_name = headwear_materials[material_index]
+
+    # Headwear render
+    for headwear_name in headwear_items:
+        # Get the actual object
+        headwear_obj = bpy.data.objects[headwear_name]
+
+        # Setup the render item
+        headwear_obj.hide_render = False
+
+        # Store the original material
+        original_mat = headwear_obj.data.materials[0].name
+
+        # Render all the item / material combinations
+        while headwear_obj in material_name:
+
+            # Get the material name
+            material_name = headwear_materials[material_index]
+            
+            # Set material!
+            headwear_obj.data.materials[0] = bpy.data.materials[material_name]
+            
+            # Set output path THIS MIGHT NOT WORK
+            output_path = "%s/%s/Headwear/%s ####.png" % (output_path, scene_name, material_name)
+            bpy.context.scene.render.filepath = output_path
+            
+            # Render!
+            bpy.ops.render.render(animation = True)
+
+            # Set material index to +1
+            material_index = material_index + 1
+        
+        # Set the material back to the original one
+        headwear_obj.data.materials[0] = bpy.data.materials[original_mat]
+
+        # Hide the item
+        headwear_obj.hide_render = True
+
+    # Comp mask setup
+    silicon_obj.is_holdout = True
+    silicon_obj.is_shadow_catcher = False
+    silicon_obj.data.materials[0] = bpy.data.materials["Skin Invisible"]
+    
+    # Render headwear comp masks
+    for headwear_name in headwear_items:
+        # Get the actual object
+        headwear_obj = bpy.data.objects[headwear_name]
+
+        # Balaclava has a different material for the comp mask
+        comp_mask_mat = "Comp Mask" if headwear_name != "Balaclava" else "Balaclava Comp Mask"
+
+        # Set the item to render
+        headwear_obj.hide_render = False
+
+        # Store the original material
+        original_mat = headwear_obj.data.materials[0]
+
+        # Set the comp mask material
+        headwear_obj.data.materials[0] = bpy.data.materials[comp_mask_mat]
+
+        # Set output path THIS MIGHT NOT WORK
+        output_path = "%s/%s/Headwear Comp Masks/%s ####.png" % (output_path, scene_name, headwear_name)
+        bpy.context.scene.render.filepath = output_path
+
+        # Render!
+        bpy.ops.render.render(animation = True)
+
+        # Restore the original material
+        headwear_obj.data.materials[0] = original_mat
+
+        # Hide the item
+        headwear_obj.hide_render = True
+
+def outerwearRender(outerwear_items, outerwear_materials, scene_name):
+    # Important objects
+    silicon_obj = bpy.data.objects["Silicon Skin " + scene_name]
+    eyes_obj = bpy.data.objects["Silicon Eyes " + scene_name]
+    backdrop_obj = bpy.data.objects["Backdrop"]
+    # Mask object
+    pants_mask = bpy.data.objects["Pants Convex Hull " + scene_name]
+    
+    # Setup the scene properly
+    silicon_obj.hide_viewport = False
+    silicon_obj.hide_render = False
+    silicon_obj.is_holdout = False
+    silicon_obj.is_shadow_catcher = False
+    silicon_obj.data.materials[0] = bpy.data.materials["Skin Invisible"]
+
+    eyes_obj.hide_viewport = False
+    eyes_obj.hide_render = False
+    eyes_obj.is_holdout = True
+    eyes_obj.is_shadow_catcher = False
+    eyes_obj.data.materials[0] = bpy.data.materials["Eyes White"]
+
+
+    backdrop_obj.hide_viewport = False
+    backdrop_obj.hide_render = False
+    backdrop_obj.is_holdout = True
+    backdrop_obj.is_shadow_catcher = False
+    backdrop_obj.data.materials[0] = bpy.data.materials["Backdrop White"]
+
+    # Start the material index
+    material_index = 0
+
+    # Get the first material name
+    material_name = outerwear_materials[material_index]
+
+    # Outerwear render
+    for outerwear_name in outerwear_items:
+        # Get the actual object
+        outerwear_obj = bpy.data.objects[outerwear_name]
+
+        # Setup the render item
+        outerwear_obj.hide_viewport = False
+        outerwear_obj.hide_render = False
+
+        # Store the original material
+        original_mat = outerwear_obj.data.materials[0].name
+
+        # Render all the item / material combinations
+        while outerwear_obj in material_name:
+
+            # Get the material name
+            material_name = outerwear_materials[material_index]
+            
+            # Set material!
+            outerwear_obj.data.materials[0] = bpy.data.materials[material_name]
+
+            # Material comes before the item's name except when Silicons FC
+            output_name = material_name.removeprefix(outerwear_name + " ") + " " + outerwear_name if outerwear_name != "Silicons FC" else material_name
+
+            # Set fur to render if the item is puffer ice fur
+            if(material_name == "Puffer Ice Fur"):
+                outerwear_obj.modifiers["ParticleSystem"].show_render = True
+            
+            # Set output path THIS MIGHT NOT WORK
+            output_path = "%s/%s/Outerwear/%s ####.png" % (output_path, scene_name, output_name)
+            bpy.context.scene.render.filepath = output_path
+            
+            # Render!
+            bpy.ops.render.render(animation = True)
+
+            # Turn off the fur
+            if(material_name == "Puffer Ice Fur"):
+                outerwear_obj.modifiers["ParticleSystem"].show_render = False
+
+            # Set material index to +1
+            material_index = material_index + 1
+        
+        # Set the material back to the original one
+        outerwear_obj.data.materials[0] = bpy.data.materials[original_mat]
+
+        # Setup the render item
+        outerwear_obj.hide_viewport = True
+        outerwear_obj.hide_render = True
+
+    # Comp mask setup
+    silicon_obj.is_holdout = True
+    silicon_obj.is_shadow_catcher = False
+    silicon_obj.data.materials[0] = bpy.data.materials["Skin Invisible"]
+
+    # Activate mask object
+    pants_mask.hide_render = False
+    
+    # Render outerwear comp masks
+    for outerwear_name in outerwear_items:
+        # Get the actual object
+        outerwear_obj = bpy.data.objects[outerwear_name]
+
+        # Store the original material
+        original_mat = outerwear_obj.data.materials[0]
+
+        # Set the comp mask material
+        outerwear_obj.data.materials[0] = bpy.data.materials["Comp Mask"]
+
+        # Set the item to render
+        outerwear_obj.hide_render = False
+
+        # Set output path
+        output_path = "%s/%s/Headwear Comp Masks/%s ####.png" % (output_path, scene_name, outerwear_name + " Comp Mask")
+        bpy.context.scene.render.filepath = output_path
+
+        # Render!
+        bpy.ops.render.render(animation = True)
+
+        if outerwear_name == "Puffer":
+            # Render Ice Fur Pufffer
+            # Set fur to render
+            outerwear_obj.modifiers["ParticleSystem"].show_render = True
+
+            # Set output path
+            output_path = "%s/%s/Headwear Comp Masks/%s ####.png" % (output_path, scene_name, outerwear_name + " Comp Mask Fur")
+
+            # Render!
+            bpy.ops.render.render(animation = True)
+
+            # Disable fur from rendering
+            outerwear_obj.modifiers["ParticleSystem"].show_render = True
+
+            # Render wool puffer
+            # Set the comp mask material
+            outerwear_obj.data.materials[0] = bpy.data.materials["Comp Mask Puffer Wool"]
+
+            # Set output path
+            output_path = "%s/%s/Headwear Comp Masks/%s ####.png" % (output_path, scene_name, outerwear_name + " Wool Comp Mask")
+
+            # Render!
+            bpy.ops.render.render(animation = True)
+
+        if outerwear_name == "Puffer Vest":
+            # Render wool puffer vest
+            # Set the comp mask material
+            outerwear_obj.data.materials[0] = bpy.data.materials["Comp Mask Puffer Vest Wool"]
+
+            # Set output path
+            output_path = "%s/%s/Headwear Comp Masks/%s ####.png" % (output_path, scene_name, outerwear_name + " Wool Comp Mask")
+
+            # Render!
+            bpy.ops.render.render(animation = True)
+        
+        # Restore the original material
+        outerwear_obj.data.materials[0] = original_mat
+
+        # Hide the item
+        outerwear_obj.hide_render = True
+
+    # Deactivate mask object
+    pants_mask.hide_render = True
 
 
 # For every scene (0 ~ Wave 1 ~ Idle 2 ~ Strut Walk 3 ~ GM)
@@ -167,4 +482,7 @@ for scene_num in range(4):
     sceneSwitch(scene_name, scenes, scene_length, collections)
 
     # Render all the assets scripts
-    skinRender()
+    skinRender(skins_materials, scene_name)
+    eyesRender(eyes_materials, scene_name)
+    headwearRender(headwear_items, headwear_materials, scene_name)
+    outerwearRender(outerwear_items, outerwear_materials, scene_name)
