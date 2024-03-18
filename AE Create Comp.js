@@ -132,7 +132,6 @@ var origin_folder_path = "F:/Silicons Animations/Optimization/RNDR/Test";
 var parent_folder = new Folder(origin_folder_path);
 if (parent_folder.exists)
 {
-
     // Get all files in the folder
     var parent_folders = parent_folder.getFiles();
 
@@ -146,7 +145,18 @@ if (parent_folder.exists)
         var child_folder = new Folder(child_folder_path);
         // Get files
         var child_files = child_folder.getFiles();
+        // Fix whitespace characters
+        child_folder_name = child_folder_name.replace(/%20/g, " ");
 
+        var index = -1; 
+        for (var i = 1; i < app.project.items.length; i++)
+        {
+            if (app.project.items[i].name == child_folder_name.replace("%20", " ") && app.project.items[i] instanceof FolderItem)
+            {
+                index = i;
+                break;
+            }
+        }
         // Loop through each file
         for (var file_index = 0; file_index < child_files.length; file_index++)
         {
@@ -155,23 +165,19 @@ if (parent_folder.exists)
             
             // Import the file into the project
             imported_file = app.project.importFile(new ImportOptions(file));
-            
-            var index = -1; 
-            for (var i = 1; i < app.project.items.length; i++)
+
+            // If name < folder name the item was imported before the folder so need to add 1
+            if (file.name > app.project.items[index].name)
             {
-                var clean_name = child_folder_name.replace("%20", " ")
-                
-                if (app.project.items[i].name.indexOf(clean_name) >= 0)
-                {
-                    index = i;
-                    break;
-                }
+                // Place in appropriate folder
+                imported_file.parentFolder = app.project.items[index];
             }
 
-            // alert("Item index: " + index);
-
-            // Place in appropriate folder
-            imported_file.parentFolder = app.project.items[index];
+            else
+            {
+                // Place in appropriate folder
+                imported_file.parentFolder = app.project.items[index+1];
+            }
         }
     }    
 }
