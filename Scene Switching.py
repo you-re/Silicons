@@ -37,7 +37,7 @@ extra_objects = ["Cup GM"]
 
 # Scene switching functions
 def shoesSwitch(switch_to_scene, scenes):
-    objects = ["Shoes Collision Box L", "Shoes Collision Box R"]
+    objects = ["Shoes Collision Box L", "Shoes Collision Box R", "Crew Socks"]
     for object_name in objects:
         object = bpy.data.objects[object_name]
         for scene in scenes:
@@ -547,8 +547,8 @@ def bottomsRender(bottoms_items, bottoms_materials, scene_name, output, overwrit
     silicon_obj.data.materials[0] = bpy.data.materials["Skin Invisible"]
 
     # Activate mask object
-    shoes_L_mask.hide_render = False
-    shoes_R_mask.hide_render = False
+    # shoes_L_mask.hide_render = False
+    # shoes_R_mask.hide_render = False
     
     # Render bottoms comp masks
     for bottoms_name in bottoms_items:
@@ -578,14 +578,15 @@ def bottomsRender(bottoms_items, bottoms_materials, scene_name, output, overwrit
         bottoms_obj.hide_render = True
 
     # Deactivate mask object
-    shoes_L_mask.hide_render = True
-    shoes_R_mask.hide_render = True
+    # shoes_L_mask.hide_render = True
+    # shoes_R_mask.hide_render = True
 
 def shoesRender(shoes_items, shoes_materials, scene_name, output, overwrite = False, singleFrame = False, startFrame = 1, endFrame = bpy.context.scene.frame_end):
     # Important objects
     silicon_obj = bpy.data.objects["Silicon Skin " + scene_name]
     eyes_obj = bpy.data.objects["Silicon Eyes " + scene_name]
     backdrop_obj = bpy.data.objects["Backdrop"]
+    socks_obj = bpy.data.objects["Crew Socks" + scene_name]
     
     # Setup the scene properly
     silicon_obj.hide_render = False
@@ -622,6 +623,10 @@ def shoesRender(shoes_items, shoes_materials, scene_name, output, overwrite = Fa
         # Store the original material
         original_mat = shoes_obj.data.materials[0].name
 
+        # Set socks to render
+        if shoes_name in ["2099s", "CAWs"]:
+            socks_obj.hide_render = False
+
         # Render all the item / material combinations
         while shoes_name in material_name:            
             # Set material!
@@ -649,6 +654,10 @@ def shoesRender(shoes_items, shoes_materials, scene_name, output, overwrite = Fa
         # Set the material back to the original one
         shoes_obj.data.materials[0] = bpy.data.materials[original_mat]
 
+        # Disable socks from rendering
+        if shoes_name in ["2099s", "CAWs"]:
+            socks_obj.hide_render = True
+
         # Setup the render item
         shoes_obj.hide_render = True
 
@@ -656,6 +665,8 @@ def shoesRender(shoes_items, shoes_materials, scene_name, output, overwrite = Fa
     silicon_obj.is_holdout = True
     silicon_obj.is_shadow_catcher = False
     silicon_obj.data.materials[0] = bpy.data.materials["Skin Invisible"]
+
+    socks_obj.data.materials[0] = bpy.data.materials["Skin Invisible"]
     
     # Render shoes comp masks
     for shoes_name in shoes_items:
@@ -664,6 +675,12 @@ def shoesRender(shoes_items, shoes_materials, scene_name, output, overwrite = Fa
 
         # Store the original material
         original_mat = shoes_obj.data.materials[0]
+
+        # Set socks to render
+        if shoes_name in ["2099s", "CAWs"]:
+            socks_obj.hide_render = False
+        else:
+            socks_obj.hide_render = True
 
         # Set the comp mask material
         shoes_obj.data.materials[0] = bpy.data.materials["Comp Mask"]
@@ -684,8 +701,11 @@ def shoesRender(shoes_items, shoes_materials, scene_name, output, overwrite = Fa
         # Hide the item
         shoes_obj.hide_render = True
 
-    # Turn mask on
+    # Turn mask off
     silicon_obj.modifiers["Shoes Mask"].show_render = False
+
+    # Restore socks material
+    socks_obj.data.materials[0] = bpy.data.materials["Crew Socks"]
 
 def renderExtraObject(extra_objects, scene_name, output, overwrite = False, singleFrame = False, startFrame = 1, endFrame = bpy.context.scene.frame_end):
     # Important objects
