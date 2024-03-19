@@ -2,7 +2,7 @@
 var layer_names = ["Backdrop", "Shoes Bottom", "Outerwear Bottom", "Bottoms Bottom", "Headwear Bottom", "Skins", "Headwear Middle", "Shoes Top", "Bottoms Top", "Outerwear Top", "Eyes", "Headwear Top", "Backdrop Tint"];
 
 // Layer items
-var attributes = ["Backdrop", "Headwear", "Eyes", "Outerwear", "Bottoms", "Shoes", "Skins"];
+var attributes = ["Backdrop", "Headwear", "Eyes", "Outerwear", "Bottoms", "Shoes", "Skins", "GM Cup"];
 
 // Comp masks
 var comp_masks = ["Headwear", "Outerwear", "Bottoms", "Shoes"];
@@ -19,6 +19,63 @@ var compAspect = 1.0;
 var compDur = 32;
 // framerate
 var compFR = 30;
+
+// Setup a project
+function projectSetUp(compDur)
+{
+    // Create a new project
+    var siliconsProject = app.newProject();
+
+    // Create a new composition in the created project - (name, width, height, pixelAspect, duration, frameRate)
+    var mainComp = app.project.items.addComp(compName, compW, compH, compAspect, compDur, compFR);
+    // Open the main comp
+    mainComp.openInViewer();
+    // Set the label to none
+    mainComp.label = 0;
+
+    // Loop through the layer names array
+    for (var i = 0; i < layer_names.length; i++)
+    {   
+        // Get the exact layer name
+        var layer_name = layer_names[i]
+
+        // Create a new composition for each layer name
+        var comp = app.project.items.addComp(layer_name, compW, compH, compAspect, compDur, compFR);
+
+        // Assign labels to the comp - labels start from 1
+        comp.label = getItemIndex(layer_name, attributes)+1;
+
+        // Add the duplicated composition item to the main composition
+        var layer = mainComp.layers.add(comp);
+    }
+
+
+    // Create folders
+    for (var i = 0; i < attributes.length; i++)
+    {   
+        // Get the attribute name
+        var attribute = attributes[i]
+
+        // Create a new folder for attributes
+        var attribute_folder = app.project.items.addFolder(attribute);
+
+        // Assign labels to the folders
+        attribute_folder.label = i+1;
+    }
+
+    // Create comp mask folders
+    for (var i = 0; i < comp_masks.length; i++)
+    {   
+        // Get the attribute name
+        var attribute = comp_masks[i]
+
+        // Create a new folder for masks
+        var comp_mask_folder = app.project.items.addFolder(attribute + " Comp Mask");
+
+        // Assign labels to the folders - labels start from 1
+        comp_mask_folder.label = getItemIndex(attribute, attributes)+1;
+    }
+}
 
 // Function to assign color to layers / comps
 function getItemIndex(item_name, array, start_iter)
@@ -63,121 +120,150 @@ function getItemIndex(item_name, array, start_iter)
     }
 }
 
-// Create a new project if one doesn't exist
-if (!app.project)
+// Import image sequence
+function importImageSequences(files, frames_in_sequence, folder_index, tag)
 {
-    var siliconsProject = app.newProject();
-    alert(siliconsProject.file.name);
+    // ----- GET LABEL INDEX -----
+    // ----- Figure out how to get the apropriate label index -----
+    /*
+    // Set start_iter to 0 if it's not provided
+    if (typeof tag === 'undefined')
+    {
+        tag = folder_index;
+    }
+    else
+    {
+        tag = 0;
+    }
+    */
+   // ----- GET LABEL INDEX -----
+
+    // Loop through each file
+    for (var file_index = 0; file_index < files.length;)
+    {
+        // Get the first frame from the sequence
+        var first_file = files[file_index];
+
+        // Import the image sequence into the project
+        var import_options = new ImportOptions(first_file);
+
+        // Set sequence flag to true
+        import_options.sequence = true;
+
+        // Import the sequence
+        var imported_sequence = app.project.importFile(import_options);
+
+        // Put the sequence in the appropriate folder in after effects
+        // If name < folder name the item was imported before the folder so need to add 1
+        if (imported_sequence.name > app.project.items[folder_index].name)
+        {
+            // Place in appropriate folder
+            imported_sequence.parentFolder = app.project.items[folder_index];
+        }
+
+        else
+        {
+            // Place in appropriate folder
+            imported_sequence.parentFolder = app.project.items[folder_index + 1];
+        }
+        
+        // ----- GET LABEL INDEX -----
+        // imported_sequence.label = tag
+        // ----- GET LABEL INDEX -----
+
+        // Iterate!
+        file_index = file_index + frames_in_sequence;
+    }
 }
 
-// Create a new composition in the created project - (name, width, height, pixelAspect, duration, frameRate)
-var mainComp = app.project.items.addComp(compName, compW, compH, compAspect, compDur, compFR);
-// Open the main comp
-mainComp.openInViewer();
-// Set the label to none
-mainComp.label = 0;
+// Import still images
+function importStillImages(files, folder_index)
+{
+    // Loop through each file
+    for (var file_index = 0; file_index < files.length; file_index++)
+    {
+        // Get the file
+        var file = files[file_index];
+        
+        // Import the file into the project
+        imported_file = app.project.importFile(new ImportOptions(file));
 
-// Loop through the layer names array
-for (var i = 0; i < layer_names.length; i++)
-{   
-    // Get the exact layer name
-    var layer_name = layer_names[i]
+        // Put the image in the appropriate folder in after effects
+        // If name < folder name the item was imported before the folder so need to add 1
+        if (file.name > app.project.items[folder_index].name)
+        {
+            // Place in appropriate folder
+            imported_file.parentFolder = app.project.items[folder_index];
+        }
 
-    // Create a new composition for each layer name
-    var comp = app.project.items.addComp(layer_name, compW, compH, compAspect, compDur, compFR);
-
-    // Assign labels to the comp - labels start from 1
-    comp.label = getItemIndex(layer_name, attributes)+1;
-
-    // Add the duplicated composition item to the main composition
-    var layer = mainComp.layers.add(comp);
+        else
+        {
+            // Place in appropriate folder
+            imported_file.parentFolder = app.project.items[folder_index + 1];
+        }
+    }
 }
 
-
-// Create folders
-for (var i = 0; i < attributes.length; i++)
-{   
-    // Get the attribute name
-    var attribute = attributes[i]
-
-    // Create a new folder for attributes
-    var attribute_folder = app.project.items.addFolder(attribute);
-
-    // Assign labels to the folders
-    attribute_folder.label = i+1;
+// Find index of the AE folder
+function findFolderIndex(folder_name)
+{
+    // Find the index of destination folder in AE
+    for (var i = 1; i < app.project.items.length; i++)
+    {
+        if (app.project.items[i].name == folder_name && app.project.items[i] instanceof FolderItem)
+        {
+            return (i);
+        }
+    }
+    alert("Folder with name '${folder_name}' not present in AE!")
+    return(-1);
 }
-
-// Create comp mask folders
-for (var i = 0; i < comp_masks.length; i++)
-{   
-    // Get the attribute name
-    var attribute = comp_masks[i]
-
-    // Create a new folder for masks
-    var comp_mask_folder = app.project.items.addFolder(attribute + " Comp Mask");
-
-    // Assign labels to the folders - labels start from 1
-    comp_mask_folder.label = getItemIndex(attribute, attributes)+1;
-}
-
-// Folder names array
-var folder_cache = [];
 
 // --------- Import ---------
 
 // Define the import folder path
-var origin_folder_path = "F:/Silicons Animations/Optimization/RNDR/Test";
+var origin_folder_path = "F:/Silicons Animations/Optimization/RNDR/20240305/";
+// Scene to setup
+var scene_name = "GM";
+// Scene frame length
+var scene_length = 100;
+
+// Setup project
+projectSetUp(scene_length);
+
+var scene_path = origin_folder_path + scene_name;
 
 // Check if the folder exists
-var parent_folder = new Folder(origin_folder_path);
-if (parent_folder.exists)
+var scene_folder = new Folder(scene_path);
+
+// Get all files in the folder
+var origin_files = scene_folder.getFiles();
+
+for (folder_index = 0; folder_index < origin_files.length; folder_index++)
 {
-    // Get all files in the folder
-    var parent_folders = parent_folder.getFiles();
+    // Child folder name
+    var child_folder_name = origin_files[folder_index].name;
+    // Fix whitespace characters
+    child_folder_name = child_folder_name.replace(/%20/g, " ");
+    // Get child path
+    var child_folder_path = scene_path + "/" + child_folder_name;
+    // Get child folder
+    var child_folder = new Folder(child_folder_path);
+    // Get files
+    var child_files = child_folder.getFiles();
 
-    for (folder_index = 0; folder_index < parent_folders.length; folder_index++)
+    // Find the index of destination folder in AE
+    var index = findFolderIndex(child_folder_name)
+
+    // Import sequences
+    if (child_folder_name != "Backdrop")
     {
-        // Child folder name
-        var child_folder_name = parent_folders[folder_index].name;
-        // Get child path
-        var child_folder_path = origin_folder_path + "/" + child_folder_name;
-        // Get child folder
-        var child_folder = new Folder(child_folder_path);
-        // Get files
-        var child_files = child_folder.getFiles();
-        // Fix whitespace characters
-        child_folder_name = child_folder_name.replace(/%20/g, " ");
+        importImageSequences(child_files, scene_length, index);
+    }
 
-        var index = -1; 
-        for (var i = 1; i < app.project.items.length; i++)
-        {
-            if (app.project.items[i].name == child_folder_name.replace("%20", " ") && app.project.items[i] instanceof FolderItem)
-            {
-                index = i;
-                break;
-            }
-        }
-        // Loop through each file
-        for (var file_index = 0; file_index < child_files.length; file_index++)
-        {
-            // Get i-file
-            var file = child_files[file_index];
-            
-            // Import the file into the project
-            imported_file = app.project.importFile(new ImportOptions(file));
-
-            // If name < folder name the item was imported before the folder so need to add 1
-            if (file.name > app.project.items[index].name)
-            {
-                // Place in appropriate folder
-                imported_file.parentFolder = app.project.items[index];
-            }
-
-            else
-            {
-                // Place in appropriate folder
-                imported_file.parentFolder = app.project.items[index+1];
-            }
-        }
-    }    
+    // Import stills
+    else
+    {
+        importStillImages(child_files, index);
+    }
 }
