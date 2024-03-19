@@ -123,20 +123,16 @@ function getItemIndex(item_name, array, start_iter)
 // Import image sequence
 function importImageSequences(files, frames_in_sequence, folder_index, tag)
 {
-    // ----- GET LABEL INDEX -----
-    // ----- Figure out how to get the apropriate label index -----
-    /*
+    // Get folder
+    var folder = app.project.items[folder_index];
+    // Initiate tag_index with default values
+    var tag_index = 0;
+
     // Set start_iter to 0 if it's not provided
-    if (typeof tag === 'undefined')
+    if (typeof tag === 'undefined' || tag == true)
     {
-        tag = folder_index;
+        tag_index = getItemIndex(folder.name, attributes) + 1;
     }
-    else
-    {
-        tag = 0;
-    }
-    */
-   // ----- GET LABEL INDEX -----
 
     // Loop through each file
     for (var file_index = 0; file_index < files.length;)
@@ -155,10 +151,10 @@ function importImageSequences(files, frames_in_sequence, folder_index, tag)
 
         // Put the sequence in the appropriate folder in after effects
         // If name < folder name the item was imported before the folder so need to add 1
-        if (imported_sequence.name > app.project.items[folder_index].name)
+        if (imported_sequence.name > folder.name)
         {
             // Place in appropriate folder
-            imported_sequence.parentFolder = app.project.items[folder_index];
+            imported_sequence.parentFolder = folder;
         }
 
         else
@@ -167,9 +163,8 @@ function importImageSequences(files, frames_in_sequence, folder_index, tag)
             imported_sequence.parentFolder = app.project.items[folder_index + 1];
         }
         
-        // ----- GET LABEL INDEX -----
-        // imported_sequence.label = tag
-        // ----- GET LABEL INDEX -----
+        // Set label to the imported sequence
+        imported_sequence.label = tag_index;
 
         // Iterate!
         file_index = file_index + frames_in_sequence;
@@ -177,8 +172,19 @@ function importImageSequences(files, frames_in_sequence, folder_index, tag)
 }
 
 // Import still images
-function importStillImages(files, folder_index)
+function importStillImages(files, folder_index, tag)
 {
+    // Get folder item
+    var folder = app.project.items[folder_index];
+    // Initiate tag_index with default values
+    var tag_index = 0;
+
+    // Set start_iter to 0 if it's not provided
+    if (typeof tag === 'undefined' || tag == true)
+    {
+        tag_index = getItemIndex(folder.name, attributes) + 1;
+    }
+
     // Loop through each file
     for (var file_index = 0; file_index < files.length; file_index++)
     {
@@ -190,10 +196,10 @@ function importStillImages(files, folder_index)
 
         // Put the image in the appropriate folder in after effects
         // If name < folder name the item was imported before the folder so need to add 1
-        if (file.name > app.project.items[folder_index].name)
+        if (file.name > folder.name)
         {
             // Place in appropriate folder
-            imported_file.parentFolder = app.project.items[folder_index];
+            imported_file.parentFolder = folder;
         }
 
         else
@@ -201,6 +207,8 @@ function importStillImages(files, folder_index)
             // Place in appropriate folder
             imported_file.parentFolder = app.project.items[folder_index + 1];
         }
+        // Set label to the imported file
+        imported_file.label = tag_index;
     }
 }
 
@@ -219,51 +227,73 @@ function findFolderIndex(folder_name)
     return(-1);
 }
 
-// --------- Import ---------
+// Import files from scene folder
+function importFromFolder(origin_folder_path, scene_num)
+{
+    // Scene to setup
+    var scene_name = scenes[scene_num];
+    // Scene frame length
+    var scene_length = scenes_length[scene_num];
+
+    // Construct scene path
+    var scene_path = origin_folder_path + scene_name;
+
+    // Check if the folder exists
+    var scene_folder = new Folder(scene_path);
+
+    // Get all files in the folder
+    var origin_files = scene_folder.getFiles();
+
+    // Iterate over each file / folder in the original folder
+    for (folder_index = 0; folder_index < origin_files.length; folder_index++)
+    {
+        // Child folder name
+        var child_folder_name = origin_files[folder_index].name;
+        // Fix whitespace characters
+        child_folder_name = child_folder_name.replace(/%20/g, " ");
+        // Get child path
+        var child_folder_path = scene_path + "/" + child_folder_name;
+        // Get child folder
+        var child_folder = new Folder(child_folder_path);
+        // Get files
+        var child_files = child_folder.getFiles();
+
+        // Find the index of destination folder in AE
+        var index = findFolderIndex(child_folder_name)
+
+        // Import sequences
+        if (child_folder_name != "Backdrop")
+        {
+            importImageSequences(child_files, scene_length, index);
+        }
+
+        // Import stills
+        else
+        {
+            importStillImages(child_files, index);
+        }
+    }
+}
+
+// ⋇⋆✦⋆⋇ RENDER SETTINGS ⋇⋆✦⋆⋇
 
 // Define the import folder path
 var origin_folder_path = "F:/Silicons Animations/Optimization/RNDR/20240305/";
-// Scene to setup
-var scene_name = "GM";
-// Scene frame length
-var scene_length = 100;
+
+// Scene to use: 0 ~ Wave 1 ~ Idle 2 ~ Strut Walk 3 ~ GM
+var scene_num = 3;
+
+// ⋇⋆✦⋆⋇ RENDER SETTINGS ⋇⋆✦⋆⋇
+
+// Scenes and their appropriate lengths
+scenes = ["Wave", "Idle", "Strut Walk", "GM"]
+scenes_length = [31, 284, 43, 100]
 
 // Setup project
 projectSetUp(scene_length);
 
-var scene_path = origin_folder_path + scene_name;
+// ----- Import from folder -----
+importFromFolder(origin_folder_path, scene_num);
 
-// Check if the folder exists
-var scene_folder = new Folder(scene_path);
 
-// Get all files in the folder
-var origin_files = scene_folder.getFiles();
-
-for (folder_index = 0; folder_index < origin_files.length; folder_index++)
-{
-    // Child folder name
-    var child_folder_name = origin_files[folder_index].name;
-    // Fix whitespace characters
-    child_folder_name = child_folder_name.replace(/%20/g, " ");
-    // Get child path
-    var child_folder_path = scene_path + "/" + child_folder_name;
-    // Get child folder
-    var child_folder = new Folder(child_folder_path);
-    // Get files
-    var child_files = child_folder.getFiles();
-
-    // Find the index of destination folder in AE
-    var index = findFolderIndex(child_folder_name)
-
-    // Import sequences
-    if (child_folder_name != "Backdrop")
-    {
-        importImageSequences(child_files, scene_length, index);
-    }
-
-    // Import stills
-    else
-    {
-        importStillImages(child_files, index);
-    }
-}
+alert("All items: " + app.project.items.length);
