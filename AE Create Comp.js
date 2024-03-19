@@ -292,8 +292,51 @@ scenes_length = [31, 284, 43, 100]
 // Setup project
 projectSetUp(scene_length);
 
-// ----- Import from folder -----
+// Import images and sequences from folder
 importFromFolder(origin_folder_path, scene_num);
 
+// ----- Cache folders and comps -----
 
-alert("All items: " + app.project.items.length);
+// Create a hashmap for folders and comps
+var foldersDict = {};
+var compsDict = {};
+
+// ----- MAYBE I can store the actual folder / comp in the hashmap -----
+// Cache folders and comps
+for (var item_index = 1; item_index < app.project.items.length; item_index++)
+{
+    var item = app.project.items[item_index];
+    // Cache folders
+    if (item instanceof FolderItem)
+    {
+        foldersDict[item_index] = item.name;
+    }
+    // Cache comps
+    else if (item instanceof CompItem)
+    {
+        compsDict[item_index] = item.name;
+    }
+    else
+    {
+        continue;
+    }
+}
+
+// ----- Get image sequences into comps -----
+for (var folder_index in foldersDict)
+{
+    // Get the actual folder
+    var folder = app.project.items[folder_index];
+    // Get the folder name
+    var folder_name = foldersDict[folder_index];
+
+    for (var comp_index in compsDict)
+    {
+        var comp_name = compsDict[comp_index];
+        if (comp_name.indexOf(folder_name) >= 0)
+        {
+            // HANDLE IMPORTING FILES FROM FOLDER INTO THE COMP
+            alert("Folder: " + folder_name + " Index: " + folder_index + " Comp: " + comp_name + " Index: " + comp_index);
+        }
+    }
+}
