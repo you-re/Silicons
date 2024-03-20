@@ -224,8 +224,9 @@ def headwearRender(headwear_items, headwear_materials, scene_name, output, overw
     
     # Setup the scene properly
     silicon_obj.hide_render = False
-    silicon_obj.is_holdout = True
+    silicon_obj.is_holdout = False
     silicon_obj.is_shadow_catcher = False
+    silicon_obj.data.materials[0] = bpy.data.materials["Skin Invisible"]
 
     eyes_obj.hide_render = False
     eyes_obj.is_holdout = True
@@ -824,12 +825,12 @@ for scene_num in range(4):
 
     # Hide cup if scene is GM
     if scene_name == "GM":
-        renderExtraObject(extra_objects, scene_name, output_path, overwrite, renderSingleFrame, startFrame)
+        renderExtraObject(extra_objects, scene_name, output_path, overwrite, renderSingleFrame, startFrame, scene_length)
 
     # Render all the assets scripts
-    skinRender(skins_materials, scene_name, output_path, overwrite, renderSingleFrame, startFrame)
-    eyesRender(eyes_materials, scene_name, output_path, overwrite, renderSingleFrame, startFrame)
-    headwearRender(headwear_items, headwear_materials, scene_name, output_path, overwrite, renderSingleFrame, startFrame)
-    outerwearRender(outerwear_items, outerwear_materials, scene_name, output_path, overwrite, renderSingleFrame, startFrame)
-    bottomsRender(bottoms_items, bottoms_materials, scene_name, output_path, overwrite, renderSingleFrame, startFrame)
-    shoesRender(shoes_items, shoes_materials, scene_name, output_path, overwrite, renderSingleFrame, startFrame)
+    skinRender(skins_materials, scene_name, output_path, overwrite, renderSingleFrame, startFrame, scene_length)
+    eyesRender(eyes_materials, scene_name, output_path, overwrite, renderSingleFrame, startFrame, scene_length)
+    headwearRender(headwear_items, headwear_materials, scene_name, output_path, overwrite, renderSingleFrame, startFrame, scene_length)
+    outerwearRender(outerwear_items, outerwear_materials, scene_name, output_path, overwrite, renderSingleFrame, startFrame, scene_length)
+    bottomsRender(bottoms_items, bottoms_materials, scene_name, output_path, overwrite, renderSingleFrame, startFrame, scene_length)
+    shoesRender(shoes_items, shoes_materials, scene_name, output_path, overwrite, renderSingleFrame, startFrame, scene_length)
