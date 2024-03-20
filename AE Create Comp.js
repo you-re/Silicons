@@ -123,17 +123,16 @@ function getItemIndex(item_name, array, start_iter)
 }
 
 // Import image sequence
-function importImageSequences(files, frames_in_sequence, folder_index, tag)
+function importImageSequences(files, frames_in_sequence, folder_index, tag_index)
 {
     // Get folder
     var folder = app.project.items[folder_index];
-    // Initiate tag_index with default values
-    var tag_index = 0;
-
-    // Set start_iter to 0 if it's not provided
-    if (typeof tag === 'undefined' || tag == true)
+    
+    // Set tag index to 0 if it's not provided
+    if (typeof tag_index === 'undefined')
     {
-        tag_index = getItemIndex(folder.name, attributes) + 1;
+        // Initiate tag_index with default values
+        tag_index = 0;
     }
 
     // Loop through each file
@@ -174,17 +173,16 @@ function importImageSequences(files, frames_in_sequence, folder_index, tag)
 }
 
 // Import still images
-function importStillImages(files, folder_index, tag)
+function importStillImages(files, folder_index, tag_index)
 {
     // Get folder item
     var folder = app.project.items[folder_index];
-    // Initiate tag_index with default values
-    var tag_index = 0;
 
-    // Set start_iter to 0 if it's not provided
-    if (typeof tag === 'undefined' || tag == true)
+    // Set tag index to 0 if it's not provided
+    if (typeof tag_index === 'undefined')
     {
-        tag_index = getItemIndex(folder.name, attributes) + 1;
+        // Initiate tag_index with default values
+        tag_index = 0;
     }
 
     // Loop through each file
@@ -262,17 +260,26 @@ function importFromFolder(origin_folder_path, scene_num)
 
         // Find the index of destination folder in AE
         var index = findFolderIndex(child_folder_name)
+        
+        // Initiate tag index - +1 because AE starts counting from 1
+        var tag_index = getItemIndex(child_folder_name, attributes) + 1;
+
+        // Set tag to none - easier to differentiate mask layers from normal layers
+        if (child_folder_name.split(" ").pop() == "Mask")
+        {
+            var tag_index = 0;
+        }
 
         // Import sequences
         if (child_folder_name != "Backdrop")
         {
-            importImageSequences(child_files, scene_length, index);
+            importImageSequences(child_files, scene_length, index, tag_index);
         }
 
         // Import stills
         else
         {
-            importStillImages(child_files, index);
+            importStillImages(child_files, index, tag_index);
         }
     }
 }
@@ -354,6 +361,49 @@ for (var item_index = 1; item_index <= app.project.items.length; item_index++)
 }
 
 // ----- Get image sequences into comps -----
+// First import the comp masks so they are in the bottom of the comp -> saves time when iterating over items
+for (var folder_index in foldersDict)
+{
+    // Get the actual folder
+    var folder = app.project.items[folder_index];
+    // Get the folder name
+    var folder_name = foldersDict[folder_index];
+
+    // Check if the folder contains mask items -> (pop() returns the last element from the array)
+    if (folder_name.split(" ").pop() == "Mask")
+    {
+        // Search for the Top comp -> only the comps on top need masks
+        folder_name = folder_name.split(" ")[0] + " Top";
+
+        for (var comp_index in compsDict)
+        {
+            var comp_name = compsDict[comp_index];
+            if (comp_name.indexOf(folder_name) >= 0)
+            {
+                // Get the precomp
+                var precomp = app.project.items[comp_index];
+
+                // Iterate over each item in the folder
+                for (var item_index = 0; item_index < folder.items.length; item_index++)
+                {
+                    // index goes from 1 to items.length
+                    //alert("Item: " + folder.items[item_index+1].name);
+
+                    // Get the actual item
+                    var item = folder.items[item_index+1];
+
+                    // Add the item into the precomp
+                    var layer = precomp.layers.add(item);
+
+                    // Hide the layer except if it's the first one
+                    layer.enabled = (item_index == 0);
+                }
+            }
+        }
+    }
+}
+
+// Import normal items to precomps
 for (var folder_index in foldersDict)
 {
     // Get the actual folder
