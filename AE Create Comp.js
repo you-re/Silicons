@@ -284,35 +284,6 @@ function importFromFolder(origin_folder_path, scene_num)
     }
 }
 
-// ----- HIDE LAYERS IN PRECOMPS -----
-// Function to hide all layers within selected pre-comps in the current composition
-function hideLayersInPrecomps()
-{
-    // Check if the active item is a composition
-    if (comp && comp instanceof CompItem)
-    {
-        // Get selected layers in the main composition
-        var selectedLayers = comp.selectedLayers;
-
-        // Iterate through selected layers
-        for (var i = 0; i < selectedLayers.length; i++) {
-            var layer = selectedLayers[i];
-
-            // Check if the selected layer is a pre-comp
-            if (layer instanceof AVLayer && layer.source instanceof CompItem)
-            {
-                // Iterate through layers in the selected pre-comp and hide them
-                var preComp = layer.source;
-                for (var j = 1; j <= preComp.numLayers; j++) {
-                    var preCompLayer = preComp.layer(j);
-                    preCompLayer.enabled = false;
-                }
-            }
-        }
-    }
-}
-// ----- END HIDE LAYERS IN PRECOMPS -----
-
 // ⋇⋆✦⋆⋇ RENDER SETTINGS ⋇⋆✦⋆⋇
 
 // Define the import folder path
