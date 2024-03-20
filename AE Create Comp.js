@@ -16,17 +16,19 @@ var compH = 1920;
 // pixel aspect ratio
 var compAspect = 1.0;
 // duration in frames
-var compDur = 32;
+//var compDur = 32;
 // framerate
 var compFR = 30;
 
 // Setup a project
-function projectSetUp(compDur)
+function projectSetUp(scene_num)
 {
+    // Set scene length in seconds
+    var compDur = scenes_length[scene_num] / compFR;
     // Create a new project
     var siliconsProject = app.newProject();
 
-    // Create a new composition in the created project - (name, width, height, pixelAspect, duration, frameRate)
+    // Create a new composition in the created project - (name, width, height, pixelAspect, duration (seconds), frameRate)
     var mainComp = app.project.items.addComp(compName, compW, compH, compAspect, compDur, compFR);
     // Open the main comp
     mainComp.openInViewer();
@@ -275,6 +277,35 @@ function importFromFolder(origin_folder_path, scene_num)
     }
 }
 
+// ----- HIDE LAYERS IN PRECOMPS -----
+// Function to hide all layers within selected pre-comps in the current composition
+function hideLayersInPrecomps()
+{
+    // Check if the active item is a composition
+    if (comp && comp instanceof CompItem)
+    {
+        // Get selected layers in the main composition
+        var selectedLayers = comp.selectedLayers;
+
+        // Iterate through selected layers
+        for (var i = 0; i < selectedLayers.length; i++) {
+            var layer = selectedLayers[i];
+
+            // Check if the selected layer is a pre-comp
+            if (layer instanceof AVLayer && layer.source instanceof CompItem)
+            {
+                // Iterate through layers in the selected pre-comp and hide them
+                var preComp = layer.source;
+                for (var j = 1; j <= preComp.numLayers; j++) {
+                    var preCompLayer = preComp.layer(j);
+                    preCompLayer.enabled = false;
+                }
+            }
+        }
+    }
+}
+// ----- END HIDE LAYERS IN PRECOMPS -----
+
 // ⋇⋆✦⋆⋇ RENDER SETTINGS ⋇⋆✦⋆⋇
 
 // Define the import folder path
@@ -286,11 +317,11 @@ var scene_num = 3;
 // ⋇⋆✦⋆⋇ RENDER SETTINGS ⋇⋆✦⋆⋇
 
 // Scenes and their appropriate lengths
-scenes = ["Wave", "Idle", "Strut Walk", "GM"]
-scenes_length = [31, 284, 43, 100]
+var scenes = ["Wave", "Idle", "Strut Walk", "GM"]
+var scenes_length = [31, 284, 43, 100]
 
 // Setup project
-projectSetUp(scene_length);
+projectSetUp(scene_num);
 
 // Import images and sequences from folder
 importFromFolder(origin_folder_path, scene_num);
@@ -303,7 +334,7 @@ var compsDict = {};
 
 // ----- MAYBE I can store the actual folder / comp in the hashmap -----
 // Cache folders and comps
-for (var item_index = 1; item_index < app.project.items.length; item_index++)
+for (var item_index = 1; item_index <= app.project.items.length; item_index++)
 {
     var item = app.project.items[item_index];
     // Cache folders
@@ -335,8 +366,24 @@ for (var folder_index in foldersDict)
         var comp_name = compsDict[comp_index];
         if (comp_name.indexOf(folder_name) >= 0)
         {
-            // HANDLE IMPORTING FILES FROM FOLDER INTO THE COMP
-            alert("Folder: " + folder_name + " Index: " + folder_index + " Comp: " + comp_name + " Index: " + comp_index);
+            // Get the precomp
+            var precomp = app.project.items[comp_index];
+
+            // Iterate over each item in the folder
+            for (var item_index = 0; item_index < folder.items.length; item_index++)
+            {
+                // index goes from 1 to items.length
+                //alert("Item: " + folder.items[item_index+1].name);
+
+                // Get the actual item
+                var item = folder.items[item_index+1];
+
+                // Add the item into the precomp
+                var layer = precomp.layers.add(item);
+
+                // Hide the layer except if it's the first one
+                layer.enabled = (item_index == 0);
+            }
         }
     }
 }
