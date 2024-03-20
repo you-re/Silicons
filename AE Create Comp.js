@@ -386,17 +386,30 @@ for (var folder_index in foldersDict)
                 // Iterate over each item in the folder
                 for (var item_index = 0; item_index < folder.items.length; item_index++)
                 {
-                    // index goes from 1 to items.length
-                    //alert("Item: " + folder.items[item_index+1].name);
-
                     // Get the actual item
                     var item = folder.items[item_index+1];
 
                     // Add the item into the precomp
                     var layer = precomp.layers.add(item);
 
-                    // Hide the layer except if it's the first one
-                    layer.enabled = (item_index == 0);
+                    // Add levels and adjust them to fix the white levels
+                    layer.effect.addProperty("ADBE Easy Levels2");
+
+                    // 1 == 32768.0 in AE
+                    var inBlack = 20000 / 32768;
+
+                    layer.effect("Levels")("Input Black").setValue(inBlack);
+                    layer.effect("Levels")("Input White").setValue(0);
+    
+                    // Unmultiply
+                    layer.effect.addProperty("ADBE Shift Channels");
+                    layer.effect.addProperty("ADBE Remove Color Matting");
+
+                    // Set take alpha from Lightness - stupid AE counts from 1
+                    layer.effect("Shift Channels")("Take Alpha From").setValue(7);
+
+                    // Hide the layer
+                    layer.enabled = false;
                 }
             }
         }
@@ -422,9 +435,6 @@ for (var folder_index in foldersDict)
             // Iterate over each item in the folder
             for (var item_index = 0; item_index < folder.items.length; item_index++)
             {
-                // index goes from 1 to items.length
-                //alert("Item: " + folder.items[item_index+1].name);
-
                 // Get the actual item
                 var item = folder.items[item_index+1];
 
