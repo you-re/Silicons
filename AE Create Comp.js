@@ -287,10 +287,30 @@ function importFromFolder(origin_folder_path, scene_num)
 // ⋇⋆✦⋆⋇ RENDER SETTINGS ⋇⋆✦⋆⋇
 
 // Define the import folder path
-var origin_folder_path = "F:/Silicons Animations/Optimization/RNDR/20240305/";
+var origin_folder_path = prompt("Location of renders:", "F:/Silicons Animations/Optimization/RNDR/20240305/");
+// Scene to load
+var scene_to_load = prompt("Scene to load ~ Wave ~ Idle ~ Strut Walk ~ GM ~ :", "GM");
 
-// Scene to use: 0 ~ Wave 1 ~ Idle 2 ~ Strut Walk 3 ~ GM
-var scene_num = 3;
+var scenes_dict =
+{
+    0 : "Wave",
+    1 : "Idle",
+    2 : "Strut Walk",
+    3 : "GM"
+};
+// 
+var scene_num = -1;
+
+// Scene to use: ~ 0 Wave ~ 1 Idle ~ 2 Strut Walk ~ 3 GM ~
+for (var scene in scenes_dict)
+{
+    if (scenes_dict[scene] == scene_to_load)
+    {
+        scene_num = scene;
+    }
+};
+
+alert("Scene number: " + scene_num);
 
 // ⋇⋆✦⋆⋇ RENDER SETTINGS ⋇⋆✦⋆⋇
 
@@ -335,53 +355,50 @@ for (var item_index = 1; item_index <= app.project.items.length; item_index++)
 // First import the comp masks so they are in the bottom of the comp -> saves time when iterating over items
 for (var folder_index in foldersDict)
 {
-    // Get the actual folder
-    var folder = app.project.items[folder_index];
     // Get the folder name
     var folder_name = foldersDict[folder_index];
-
-    // Check if the folder contains mask items -> (pop() returns the last element from the array)
-    if (folder_name.split(" ").pop() == "Mask")
-    {
-        // Search for the Top comp -> only the comps on top need masks
-        folder_name = folder_name.split(" ")[0] + " Top";
-
-        for (var comp_index in compsDict)
-        {
-            var comp_name = compsDict[comp_index];
-            if (comp_name.indexOf(folder_name) >= 0)
-            {
-                // Get the precomp
-                var precomp = app.project.items[comp_index];
-
-                // Iterate over each item in the folder
-                for (var item_index = 0; item_index < folder.items.length; item_index++)
-                {
-                    // Get the actual item
-                    var item = folder.items[item_index+1];
-
-                    // Add the item into the precomp
-                    var layer = precomp.layers.add(item);
-
-                    // Add levels and adjust them to fix the white levels
-                    layer.effect.addProperty("ADBE Easy Levels2");
-
-                    // 1 == 32768.0 in AE
-                    var inBlack = 20000 / 32768;
-
-                    layer.effect("Levels")("Input Black").setValue(inBlack);
-                    layer.effect("Levels")("Input White").setValue(0);
     
-                    // Unmultiply
-                    layer.effect.addProperty("ADBE Shift Channels");
-                    layer.effect.addProperty("ADBE Remove Color Matting");
+    // For each comp
+    for (var comp_index in compsDict)
+    {
+        // Get the comp name
+        var comp_name = compsDict[comp_index];
 
-                    // Set take alpha from Lightness - stupid AE counts from 1
-                    layer.effect("Shift Channels")("Take Alpha From").setValue(7);
+        if (folder_name.split(" ").pop() == "Mask" && comp_name == folder_name.split(" ")[0] + " Top")
+        {
+            // Get the folder
+            var folder = app.project.items[folder_index];
 
-                    // Hide the layer
-                    layer.enabled = false;
-                }
+            // Get the comp
+            var comp = app.project.items[comp_index];
+
+            // Iterate over each item in the folder
+            for (var item_index = 0; item_index < folder.items.length; item_index++)
+            {
+                // Get item from the folder
+                var item = folder.items[item_index+1];
+
+                // Add the item into the precomp
+                var layer = comp.layers.add(item);
+
+                // Add levels and adjust them to fix the white levels
+                layer.effect.addProperty("ADBE Easy Levels2");
+
+                // 1 == 32768.0 in AE
+                var inBlack = 20000 / 32768;
+
+                layer.effect("Levels")("Input Black").setValue(inBlack);
+                layer.effect("Levels")("Input White").setValue(0);
+
+                // Unmultiply
+                layer.effect.addProperty("ADBE Shift Channels");
+                layer.effect.addProperty("ADBE Remove Color Matting");
+
+                // Set take alpha from Lightness - stupid AE counts from 1
+                layer.effect("Shift Channels")("Take Alpha From").setValue(7);
+
+                // Hide the layer
+                layer.enabled = false;
             }
         }
     }
@@ -416,5 +433,34 @@ for (var folder_index in foldersDict)
                 layer.enabled = (item_index == 0);
             }
         }
+    }
+}
+
+// ----- Change the tint comp to actually tint the layers below -----
+// Ugly function but whatever
+for (var i = 1; i <= app.project.items.length; i++)
+{
+    var item = app.project.items[i]
+    if (item.name == "Silicons")
+    {
+        // Store the main comp to reference later
+        main_comp = item;
+        // Open the main comp
+        main_comp.openInViewer();
+        break;
+    }
+}
+
+for (var i = 1; i <= main_comp.numLayers; i++)
+{
+    if (main_comp.layer(i).name == "Backdrop Tint")
+    {
+        layer = main_comp.layer(i);
+        // Set blending mode to "Color"
+        layer.blendingMode = BlendingMode.COLOR;
+
+        // Set opacity to 20%
+        layer.opacity.setValue(20);
+        break;
     }
 }
