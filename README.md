@@ -14,3 +14,4 @@ Ment for setting up the scenes in AE:
  - it will ask you about the location of the renders (**Don't go into a specific scene yet!**)
  - next it will ask you what scene to import
  - after that the scene should load and be properly set-up
+ - **MASKING ISN'T DONE YET!**
