@@ -587,7 +587,7 @@ def shoesRender(shoes_items, shoes_materials, scene_name, output, overwrite = Fa
     silicon_obj = bpy.data.objects["Silicon Skin " + scene_name]
     eyes_obj = bpy.data.objects["Silicon Eyes " + scene_name]
     backdrop_obj = bpy.data.objects["Backdrop"]
-    socks_obj = bpy.data.objects["Crew Socks" + scene_name]
+    socks_obj = bpy.data.objects["Crew Socks"]
     
     # Setup the scene properly
     silicon_obj.hide_render = False
@@ -745,9 +745,11 @@ def renderExtraObject(extra_objects, scene_name, output, overwrite = False, sing
         bpy.data.objects[object].hide_render = True    
 
 # This function is a mess, need to fix it
-def renderTime(overwrite = True, singleFrame = False, startFrame = 1, endFrame = bpy.context.scene.frame_end):
+def renderTime(overwrite = True, singleFrame = False, startFrame = 1, endFrame = bpy.context.scene.frame_end, placeholders = True):
     # Get output path
     output_path = bpy.context.scene.render.filepath
+
+    bpy.context.scene.render.use_placeholder = placeholders
 
     if overwrite:
         # Normal render
@@ -794,6 +796,36 @@ def disableItems(headwear_items, outerwear_items, bottoms_items, shoes_items, ex
     for object in all_items:
         bpy.data.objects[object].hide_render = True
 
+def renderScenes(singleScene = False, startRange = 0, endRange = 4):
+    # Get the range
+    renderRange = range(startRange, endRange)
+
+    # Get the range
+    if singleScene:
+        renderRange = [startRange]
+
+    # For every scene (0 ~ Wave 1 ~ Idle 2 ~ Strut Walk 3 ~ GM)
+    for scene_num in renderRange:
+
+        # Get the scene and scene frame range to switch to
+        scene_name = scenes[scene_num]
+        scene_length = scenes_length[scene_num]
+
+        # Switch to correct scene
+        sceneSwitch(scene_name, scenes, scene_length, collections, scene_num)
+
+        # Hide cup if scene is GM
+        if scene_name == "GM":
+            renderExtraObject(extra_objects, scene_name, output_path, overwrite, renderSingleFrame, startFrame, scene_length)
+
+        # Render all the assets scripts
+        skinRender(skins_materials, scene_name, output_path, overwrite, renderSingleFrame, startFrame, scene_length)
+        eyesRender(eyes_materials, scene_name, output_path, overwrite, renderSingleFrame, startFrame, scene_length)
+        headwearRender(headwear_items, headwear_materials, scene_name, output_path, overwrite, renderSingleFrame, startFrame, scene_length)
+        outerwearRender(outerwear_items, outerwear_materials, scene_name, output_path, overwrite, renderSingleFrame, startFrame, scene_length)
+        bottomsRender(bottoms_items, bottoms_materials, scene_name, output_path, overwrite, renderSingleFrame, startFrame, scene_length)
+        shoesRender(shoes_items, shoes_materials, scene_name, output_path, overwrite, renderSingleFrame, startFrame, scene_length)
+
 # Disable all items from rendering
 disableItems(headwear_items, outerwear_items, bottoms_items, shoes_items, extra_objects)
 
@@ -813,24 +845,20 @@ startFrame = 1
 # Render with overwriting?
 overwrite = False
 
-# For every scene (0 ~ Wave 1 ~ Idle 2 ~ Strut Walk 3 ~ GM)
-for scene_num in range(4):
+'''IMPORTANT: 
+If you want to render all the scenes set:
+renderSingleScene = False
+startScene = 0
+If you want to render a specific scene:
+renderSingleScene = True
+startScene = ~number of scene you want to render~
+'''
 
-    # Get the scene and scene frame range to switch to
-    scene_name = scenes[scene_num]
-    scene_length = scenes_length[scene_num]
+# Render single scene? (0 Wave ~ 1 Idle ~ 2 Strut Walk ~ 3 GM)
+renderSingleScene = False
 
-    # Switch to correct scene
-    sceneSwitch(scene_name, scenes, scene_length, collections, scene_num)
+# Start scene
+startScene = 0
 
-    # Hide cup if scene is GM
-    if scene_name == "GM":
-        renderExtraObject(extra_objects, scene_name, output_path, overwrite, renderSingleFrame, startFrame, scene_length)
-
-    # Render all the assets scripts
-    skinRender(skins_materials, scene_name, output_path, overwrite, renderSingleFrame, startFrame, scene_length)
-    eyesRender(eyes_materials, scene_name, output_path, overwrite, renderSingleFrame, startFrame, scene_length)
-    headwearRender(headwear_items, headwear_materials, scene_name, output_path, overwrite, renderSingleFrame, startFrame, scene_length)
-    outerwearRender(outerwear_items, outerwear_materials, scene_name, output_path, overwrite, renderSingleFrame, startFrame, scene_length)
-    bottomsRender(bottoms_items, bottoms_materials, scene_name, output_path, overwrite, renderSingleFrame, startFrame, scene_length)
-    shoesRender(shoes_items, shoes_materials, scene_name, output_path, overwrite, renderSingleFrame, startFrame, scene_length)
+# Render the scenes!
+renderScenes(renderSingleScene, startScene)
