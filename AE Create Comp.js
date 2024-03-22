@@ -150,6 +150,8 @@ function importImageSequences(files, frames_in_sequence, folder_index, tag_index
         // Import the sequence
         var imported_sequence = app.project.importFile(import_options);
 
+        alert("Imported sequence name: " + imported_sequence.name);
+
         // Put the sequence in the appropriate folder in after effects
         // If name < folder name the item was imported before the folder so need to add 1
         if (imported_sequence.name > folder.name)
@@ -287,14 +289,17 @@ function importFromFolder(origin_folder_path, scene_num)
 // ⋇⋆✦⋆⋇ RENDER SETTINGS ⋇⋆✦⋆⋇
 
 // Define the import folder path
-var origin_folder_path = prompt("Location of renders:", "F:/Silicons Animations/Optimization/RNDR/20240305");
+var origin_folder_path = prompt("Location of renders:", "F:\\Silicons Animations\\Optimization\\Send\\silicons_render");
 
-// Fix origin path
-origin_folder_path = origin_folder_path.replace(/\\/g, "/") + "/";
+// ----- QUICK FIX ----- Fix origin path
+origin_folder_path = origin_folder_path.replace(/\\/g, "/");
+if (origin_folder_path[origin_folder_path.length] != "/")
+{
+    origin_folder_path += "/";
+}
 
-alert ("Origin path: " + origin_folder_path);
 // Scene to load
-var scene_to_load = prompt("Scene to load ~ Wave ~ Idle ~ Strut Walk ~ GM ~ :", "GM");
+var scene_to_load = prompt("Scene to load ~ Wave ~ Idle ~ Strut Walk ~ GM ~ :", "Wave");
 
 var scenes_dict =
 {
