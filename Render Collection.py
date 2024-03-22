@@ -340,7 +340,7 @@ def headwearRender(headwear_items, headwear_materials, scene_name, output, overw
         headwear_obj.data.materials[0] = bpy.data.materials[comp_mask_mat]
 
         # Set output path THIS MIGHT NOT WORK
-        output_path = "%s/%s/Headwear Comp Masks/%s ####" % (output, scene_name, headwear_name)
+        output_path = "%s/%s/Headwear Comp Mask/%s ####" % (output, scene_name, headwear_name + " Comp Mask")
         bpy.context.scene.render.filepath = output_path
 
         # Render!
@@ -453,7 +453,7 @@ def outerwearRender(outerwear_items, outerwear_materials, scene_name, output, ov
         outerwear_obj.hide_render = False
 
         # Set output path
-        output_path = "%s/%s/Outerwear Comp Masks/%s ####" % (output, scene_name, outerwear_name + " Comp Mask")
+        output_path = "%s/%s/Outerwear Comp Mask/%s ####" % (output, scene_name, outerwear_name + " Comp Mask")
         bpy.context.scene.render.filepath = output_path
 
         # Render!
@@ -465,7 +465,7 @@ def outerwearRender(outerwear_items, outerwear_materials, scene_name, output, ov
             outerwear_obj.modifiers["ParticleSystem"].show_render = True
 
             # Set output path
-            output_path = "%s/%s/Outerwear Comp Masks/%s ####" % (output, scene_name, outerwear_name + " Comp Mask Fur")
+            output_path = "%s/%s/Outerwear Comp Mask/%s ####" % (output, scene_name, outerwear_name + " Fur Comp Mask")
 
             # Render!
             renderTime(overwrite, singleFrame, startFrame, endFrame)
@@ -478,7 +478,7 @@ def outerwearRender(outerwear_items, outerwear_materials, scene_name, output, ov
             outerwear_obj.data.materials[0] = bpy.data.materials["Comp Mask Puffer Wool"]
 
             # Set output path
-            output_path = "%s/%s/Outerwear Comp Masks/%s ####" % (output, scene_name, outerwear_name + " Wool Comp Mask")
+            output_path = "%s/%s/Outerwear Comp Mask/%s ####" % (output, scene_name, outerwear_name + " Wool Comp Mask")
 
             # Render!
             renderTime(overwrite, singleFrame, startFrame, endFrame)
@@ -489,7 +489,7 @@ def outerwearRender(outerwear_items, outerwear_materials, scene_name, output, ov
             outerwear_obj.data.materials[0] = bpy.data.materials["Comp Mask Puffer Vest Wool"]
 
             # Set output path
-            output_path = "%s/%s/Outerwear Comp Masks/%s ####" % (output, scene_name, outerwear_name + " Wool Comp Mask")
+            output_path = "%s/%s/Outerwear Comp Mask/%s ####" % (output, scene_name, outerwear_name + " Wool Comp Mask")
 
             # Render!
             renderTime(overwrite, singleFrame, startFrame, endFrame)
@@ -600,7 +600,7 @@ def bottomsRender(bottoms_items, bottoms_materials, scene_name, output, overwrit
         bottoms_obj.hide_render = False
 
         # Set output path
-        output_path = "%s/%s/Bottoms Comp Masks/%s ####" % (output, scene_name, bottoms_name + " Comp Mask")
+        output_path = "%s/%s/Bottoms Comp Mask/%s ####" % (output, scene_name, bottoms_name + " Comp Mask")
         bpy.context.scene.render.filepath = output_path
 
         # Render!
@@ -724,7 +724,7 @@ def shoesRender(shoes_items, shoes_materials, scene_name, output, overwrite = Fa
         shoes_obj.hide_render = False
 
         # Set output path
-        output_path = "%s/%s/Shoes Comp Masks/%s ####" % (output, scene_name, shoes_name + " Comp Mask")
+        output_path = "%s/%s/Shoes Comp Mask/%s ####" % (output, scene_name, shoes_name + " Comp Mask")
         bpy.context.scene.render.filepath = output_path
 
         # Render!
