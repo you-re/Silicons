@@ -33,6 +33,9 @@ shoes_items = ["2099s", "2288s", "Space Runners", "CAWs", "Skywalkers"]
 
 shoes_materials = ["2099s Black", "2099s White", "2099s Carbon", "2099s Silver", "2099s Liquid", "2288s Black", "2288s Carbon", "2288s Silver", "2288s White", "Space Runners Black", "Space Runners Silver", "Space Runners White", "CAWs Black", "CAWs White", "CAWs Chrome", "Skywalkers Black", "Skywalkers White"]
 
+# Backdrop materials
+backdrop_materials = ["Aqua", "Blue", "Clouds", "Cream", "Green", "Orange", "Pink", "Purple", "Yellow"]
+
 extra_objects = ["Cup GM"]
 
 # Scene switching functions
@@ -129,6 +132,37 @@ def sceneSwitch(switch_to_scene, scenes, switch_to_length, collections, scene_nu
     # Set end frame
     bpy.context.scene.frame_end = switch_to_length
 
+    print("⋇⋆✦⋆⋇ Switched to %s scene ⋇⋆✦⋆⋇" %(scenes[scene_num]))
+
+# Render Backdrops
+def backdropRender(scene, output):
+    objects = ["Silicon Rig", "Silicon Skin", "Silicon Eyes"]
+    # Hide all scene objects
+    for object_name in objects:
+        for scene_name in scenes:
+            object = bpy.data.objects[object_name + " " + scene_name]
+            object.hide_render = True
+    # Get the backdrop object
+    backdrop = bpy.data.objects["Backdrop"]
+
+    backdrop.hide_render = False
+    backdrop.is_holdout = False
+    backdrop.is_shadow_catcher = False
+
+    for material in backdrop_materials:
+        material_name = "Backdrop " + material
+        backdrop.data.materials[0] = bpy.data.materials[material_name]
+
+        # Set current frame to 1
+        bpy.context.scene.frame_current = 1
+
+        # Fix output path to only the current frame
+        output_path = os.path.join(output, scene, "Backdrop", material_name)
+        bpy.context.scene.render.filepath = output_path
+
+        # Render single frame
+        bpy.ops.render.render(animation = False, write_still = True)
+    
 # Render functions
 def skinRender(skins_materials, scene_name, output, overwrite = False, singleFrame = False, startFrame = 1, endFrame = bpy.context.scene.frame_end):
     # Important objects
@@ -807,12 +841,16 @@ def renderScenes(singleScene = False, startRange = 0, endRange = 4):
     # For every scene (0 ~ Wave 1 ~ Idle 2 ~ Strut Walk 3 ~ GM)
     for scene_num in renderRange:
 
+        print("Scene number: " + str(scene_num))
+
         # Get the scene and scene frame range to switch to
         scene_name = scenes[scene_num]
         scene_length = scenes_length[scene_num]
 
         # Switch to correct scene
         sceneSwitch(scene_name, scenes, scene_length, collections, scene_num)
+
+        backdropRender(scene_name, output_path)
 
         # Hide cup if scene is GM
         if scene_name == "GM":
