@@ -150,7 +150,7 @@ function importImageSequences(files, frames_in_sequence, folder_index, tag_index
         // Import the sequence
         var imported_sequence = app.project.importFile(import_options);
 
-        alert("Imported sequence name: " + imported_sequence.name);
+        // alert("Imported sequence name: " + imported_sequence.name);
 
         // Put the sequence in the appropriate folder in after effects
         // If name < folder name the item was imported before the folder so need to add 1
