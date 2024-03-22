@@ -127,6 +127,12 @@ function importImageSequences(files, frames_in_sequence, folder_index, tag_index
 {
     // Get folder
     var folder = app.project.items[folder_index];
+
+    var prefix = "";
+    if (folder.name.indexOf("Comp Masks") >= 0)
+    {
+        prefix = "Comp Masks ";
+    }
     
     // Set tag index to 0 if it's not provided
     if (typeof tag_index === 'undefined')
@@ -149,6 +155,8 @@ function importImageSequences(files, frames_in_sequence, folder_index, tag_index
 
         // Import the sequence
         var imported_sequence = app.project.importFile(import_options);
+
+        imported_sequence.name = prefix + imported_sequence.name.replace(" Comp Mask", "");
 
         // Put the sequence in the appropriate folder in after effects
         // If name < folder name the item was imported before the folder so need to add 1
@@ -407,8 +415,6 @@ for (var folder_index in foldersDict)
 
                 // Hide the layer
                 layer.enabled = false;
-
-                layer.name = "Comp Masks " + layer.name;
             }
         }
     }
