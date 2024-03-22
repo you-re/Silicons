@@ -157,7 +157,7 @@ def backdropRender(scene, output):
         bpy.context.scene.frame_current = 1
 
         # Fix output path to only the current frame
-        output_path = os.path.join(output, scene, "Backdrop", material_name)
+        output_path = os.path.join(output, scene, "Backdrop", material)
         bpy.context.scene.render.filepath = output_path
 
         # Render single frame
