@@ -287,7 +287,12 @@ function importFromFolder(origin_folder_path, scene_num)
 // ⋇⋆✦⋆⋇ RENDER SETTINGS ⋇⋆✦⋆⋇
 
 // Define the import folder path
-var origin_folder_path = prompt("Location of renders:", "F:/Silicons Animations/Optimization/RNDR/20240305/");
+var origin_folder_path = prompt("Location of renders:", "F:/Silicons Animations/Optimization/RNDR/20240305");
+
+// Fix origin path
+origin_folder_path = origin_folder_path.replace(/\\/g, "/") + "/";
+
+alert ("Origin path: " + origin_folder_path);
 // Scene to load
 var scene_to_load = prompt("Scene to load ~ Wave ~ Idle ~ Strut Walk ~ GM ~ :", "GM");
 
@@ -508,7 +513,7 @@ for (var folder_index in foldersDict)
                     var layer = precomp.layers.add(item);
 
                     // Hide the layer except if it's the first one
-                    layer.enabled = (item_index == 0);
+                    layer.enabled = false;
                 }
             }
         }
