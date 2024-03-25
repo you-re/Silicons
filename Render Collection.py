@@ -701,7 +701,7 @@ def shoesRender(shoes_items, shoes_materials, scene_name, output, overwrite = Fa
     silicon_obj.is_shadow_catcher = False
     silicon_obj.data.materials[0] = bpy.data.materials["Skin Invisible"]
 
-    socks_obj.data.materials[0] = bpy.data.materials["Skin Invisible"]
+    socks_obj.data.materials[0] = bpy.data.materials["Comp Mask"]
     
     # Render shoes comp masks
     for shoes_name in shoes_items:
