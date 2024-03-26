@@ -72,7 +72,7 @@ function projectSetUp(scene_num)
         var attribute = comp_masks[i]
 
         // Create a new folder for masks
-        var comp_mask_folder = app.project.items.addFolder(attribute + " Comp Masks");
+        var comp_mask_folder = app.project.items.addFolder(attribute + " Comp Mask");
 
         // Assign labels to the folders - labels start from 1
         comp_mask_folder.label = getItemIndex(attribute, attributes)+1;
@@ -129,9 +129,9 @@ function importImageSequences(files, frames_in_sequence, folder_index, tag_index
     var folder = app.project.items[folder_index];
 
     var prefix = "";
-    if (folder.name.indexOf("Comp Masks") >= 0)
+    if (folder.name.indexOf("Comp Mask") >= 0)
     {
-        prefix = "Comp Masks ";
+        prefix = "Comp Mask ";
     }
     
     // Set tag index to 0 if it's not provided
@@ -273,7 +273,7 @@ function importFromFolder(origin_folder_path, scene_num)
         var tag_index = getItemIndex(child_folder_name, attributes) + 1;
 
         // Set tag to none - easier to differentiate mask layers from normal layers
-        if (child_folder_name.split(" ").pop() == "Masks")
+        if (child_folder_name.split(" ").pop() == "Mask")
         {
             var tag_index = 0;
         }
@@ -380,7 +380,7 @@ for (var folder_index in foldersDict)
         // Get the comp name
         var comp_name = compsDict[comp_index];
 
-        if (folder_name.split(" ").pop() == "Masks" && comp_name == folder_name.split(" ")[0] + " Top")
+        if (folder_name.split(" ").pop() == "Mask" && comp_name == folder_name.split(" ")[0] + " Top")
         {
             // Get the folder
             var folder = app.project.items[folder_index];
@@ -433,7 +433,7 @@ for (var folder_index in foldersDict)
         // Get the comp name
         var comp_name = compsDict[comp_index];
 
-        if (folder_name.split(" ").pop() == "Masks" && comp_name == folder_name.split(" ")[0] + " Middle")
+        if (folder_name.split(" ").pop() == "Mask" && comp_name == folder_name.split(" ")[0] + " Middle")
         {
             // Get the folder
             var folder = app.project.items[folder_index];
@@ -614,7 +614,7 @@ function compMaskDictCreate(itemList, current_layer)
     for (var i = 0; i<= itemList.length; i++)
     {   
         var item = itemList[i];
-        var maskLayerName = "Comp Masks " + item + " [";
+        var maskLayerName = "Comp Mask " + item + " [";
 
         // alert("Item: " + item + " Mask layer name: " + maskLayerName);
         
@@ -654,7 +654,7 @@ function setLayerMasks(itemList, maskDict, current_layer)
         {
             var layer = current_layer.layer(j);
 
-            if (layer.name.indexOf(layerNameFilter) >= 0 && layer.name.indexOf("Comp Masks"))
+            if (layer.name.indexOf(layerNameFilter) >= 0 && layer.name.indexOf("Comp Mask"))
             {
                 layer.setTrackMatte(trackMatteLayer, TrackMatteType.ALPHA);
             }
