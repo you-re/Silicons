@@ -514,7 +514,7 @@ def bottomsRender(bottoms_items, bottoms_materials, scene_name, output, overwrit
     
     # Setup the scene properly
     silicon_obj.hide_render = False
-    silicon_obj.is_holdout = True
+    silicon_obj.is_holdout = False
     silicon_obj.is_shadow_catcher = False
     silicon_obj.data.materials[0] = bpy.data.materials["Skin Invisible"]
 
@@ -872,7 +872,10 @@ disableItems(headwear_items, outerwear_items, bottoms_items, shoes_items, extra_
 output_path = "//./silicons_render"
 
 # Specify format!
-format = ".exr"
+format = ".png"
+bpy.context.scene.render.image_settings.file_format = 'PNG'
+bpy.context.scene.render.image_settings.color_mode = 'RGBA'
+bpy.context.scene.render.image_settings.color_depth = '16'
 
 # Render single frame?
 renderSingleFrame = False
