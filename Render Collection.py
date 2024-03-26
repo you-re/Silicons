@@ -877,6 +877,11 @@ bpy.context.scene.render.image_settings.file_format = 'PNG'
 bpy.context.scene.render.image_settings.color_mode = 'RGBA'
 bpy.context.scene.render.image_settings.color_depth = '16'
 
+bpy.context.scene.cycles.use_adaptive_sampling = True
+bpy.context.scene.cycles.adaptive_threshold = 0.01
+bpy.context.scene.cycles.samples = 1024
+bpy.context.scene.cycles.time_limit = 0
+
 # Render single frame?
 renderSingleFrame = False
 
