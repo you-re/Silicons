@@ -405,7 +405,7 @@ def outerwearRender(outerwear_items, outerwear_materials, scene_name, output, ov
             if(material_name == "Puffer Ice Fur"):
                 outerwear_obj.modifiers["ParticleSystem"].show_render = True
             
-            # Set output path THIS MIGHT NOT WORK
+            # Set output path
             output_path = "%s/%s/Outerwear/%s ####" % (output, scene_name, output_name)
             bpy.context.scene.render.filepath = output_path
             
@@ -460,13 +460,14 @@ def outerwearRender(outerwear_items, outerwear_materials, scene_name, output, ov
         renderTime(overwrite, singleFrame, startFrame, endFrame)
 
         if outerwear_name == "Puffer":
-            # Render Ice Fur Pufffer
+            # Render Ice Fur Puffer
             # Set fur to render
             outerwear_obj.modifiers["ParticleSystem"].show_render = True
 
             # Set output path
             output_path = "%s/%s/Outerwear Comp Mask/%s ####" % (output, scene_name, outerwear_name + " Fur Comp Mask")
-
+            bpy.context.scene.render.filepath = output_path
+            
             # Render!
             renderTime(overwrite, singleFrame, startFrame, endFrame)
 
@@ -479,6 +480,7 @@ def outerwearRender(outerwear_items, outerwear_materials, scene_name, output, ov
 
             # Set output path
             output_path = "%s/%s/Outerwear Comp Mask/%s ####" % (output, scene_name, outerwear_name + " Wool Comp Mask")
+            bpy.context.scene.render.filepath = output_path
 
             # Render!
             renderTime(overwrite, singleFrame, startFrame, endFrame)
@@ -490,6 +492,7 @@ def outerwearRender(outerwear_items, outerwear_materials, scene_name, output, ov
 
             # Set output path
             output_path = "%s/%s/Outerwear Comp Mask/%s ####" % (output, scene_name, outerwear_name + " Wool Comp Mask")
+            bpy.context.scene.render.filepath = output_path
 
             # Render!
             renderTime(overwrite, singleFrame, startFrame, endFrame)
@@ -622,6 +625,9 @@ def shoesRender(shoes_items, shoes_materials, scene_name, output, overwrite = Fa
     eyes_obj = bpy.data.objects["Silicon Eyes " + scene_name]
     backdrop_obj = bpy.data.objects["Backdrop"]
     socks_obj = bpy.data.objects["Crew Socks"]
+
+    samples = bpy.context.scene.cycles.samples
+    bpy.context.scene.cycles.samples = 1024
     
     # Setup the scene properly
     silicon_obj.hide_render = False
@@ -741,6 +747,8 @@ def shoesRender(shoes_items, shoes_materials, scene_name, output, overwrite = Fa
 
     # Restore socks material
     socks_obj.data.materials[0] = bpy.data.materials["Crew Socks"]
+
+    bpy.context.scene.cycles.samples = samples
 
 def renderExtraObject(extra_objects, scene_name, output, overwrite = False, singleFrame = False, startFrame = 1, endFrame = bpy.context.scene.frame_end):
     # Important objects
@@ -879,7 +887,7 @@ bpy.context.scene.render.image_settings.color_depth = '16'
 
 bpy.context.scene.cycles.use_adaptive_sampling = True
 bpy.context.scene.cycles.adaptive_threshold = 0.01
-bpy.context.scene.cycles.samples = 1024
+bpy.context.scene.cycles.samples = 256
 bpy.context.scene.cycles.time_limit = 0
 
 # Render single frame?
