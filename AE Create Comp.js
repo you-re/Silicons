@@ -20,6 +20,9 @@ var compAspect = 1.0;
 // framerate
 var compFR = 30;
 
+// Don't suppress dialogs
+app.endSuppressDialogs(true);
+
 // Setup a project
 function projectSetUp(scene_num)
 {
@@ -586,9 +589,9 @@ function getLayerMaskNames(assetGroup)
 
     else if (assetGroup == "Outerwear")
     {
-        items = ["Bomber Jacket", "Bowler", "Burnout", "Button Down", "Cardigan", "Denim Jacket", "Flannel", "Fur Coat", "Hoodie", "CAW Hoodie", "Sweater", "T-Shirt", "NY Sweater", "Oversized T-Shirt", "Vest", "Prep", "Puffer", "Puffer Vest", "Fur Puffer" , "Rugby Jersey", "Silicons FC", "Two-Tone", "V-Neck", "Varsity Jacket"];
+        items = ["Bomber Jacket", "Bowler", "Burnout", "Button Down", "Cardigan", "Denim Jacket", "Flannel", "Fur Coat", "Hoodie", "CAW Hoodie", "Sweater", "T-Shirt", "NY Sweater", "Oversized T-Shirt", "Vest", "Prep", "Puffer", "Puffer Vest", "Rugby Jersey", "Silicons FC", "Two-Tone", "V-Neck", "Varsity Jacket", "Puffer Fur", "Puffer Wool", "Puffer Vest Wool"]
 
-        materials = ["Bomber Jacket Black", "Bomber Jacket Tan", "Bowler Black", "Bowler Crochet", "Bowler Eggshell", "Burnout Black", "Burnout Carbon", "Burnout Purple", "Burnout Red", "Burnout White", "Button Down Black", "Button Down Blue", "Button Down White", "Cardigan Black", "Cardigan Ice", "Cardigan Purple", "Denim Jacket Black", "Denim Jacket Blue", "Denim Jacket Chess", "Denim Jacket Salt Pan", "Flannel Barney", "Flannel Blue", "Flannel Tweed", "Fur Coat Ice", "Fur Coat Pistachio", "Fur Coat Purple", "Hoodie Black", "Hoodie Ice", "Hoodie Purple", "Hoodie White", "CAW Hoodie Black", "CAW Hoodie Purple", "CAW Hoodie White", "Sweater Black", "Sweater Duo", "Sweater Eggshell", "Sweater Ice", "Sweater Purple", "Sweater Purple Camo", "T-Shirt Crystal Ball", "T-Shirt Essential", "T-Shirt Flow", "T-Shirt GM", "T-Shirt Toly", "NY Sweater Black", "NY Sweater White", "Oversized T-Shirt Black", "Oversized T-Shirt Eggshell", "Oversized T-Shirt Grey", "Oversized T-Shirt Ice", "Oversized T-Shirt Purple", "Oversized T-Shirt White", "Vest Blue", "Vest Purple", "Vest White", "Prep Black", "Prep Eggshell", "Prep Ice Blue", "Prep Purple", "Prep Rose", "Puffer Black", "Puffer Gold", "Puffer Purple", "Puffer Wool", "Puffer Purple Camo", "Puffer Vest Black", "Puffer Vest Ice", "Puffer Vest Purple", "Puffer Vest Purple Camo", "Puffer Vest Wool", "Puffer Ice Fur", "Rugby Jersey Black", "Rugby Jersey Blue", "Rugby Jersey Pink", "Silicons FC - Alternate", "Silicons FC - Away", "Silicons FC - Home", "Two-Tone Black", "Two-Tone Blue", "Two-Tone Purple", "Two-Tone Rose", "V-Neck Black", "V-Neck Pistachio", "V-Neck White", "Varsity Jacket Black", "Varsity Jacket Tan"];
+        materials = ["Bomber Jacket Black", "Bomber Jacket Tan", "Bowler Black", "Bowler Crochet", "Bowler Eggshell", "Burnout Black", "Burnout Carbon", "Burnout Purple", "Burnout Red", "Burnout White", "Button Down Black", "Button Down Blue", "Button Down White", "Cardigan Black", "Cardigan Ice", "Cardigan Purple", "Denim Jacket Black", "Denim Jacket Blue", "Denim Jacket Chess", "Denim Jacket Salt Pan", "Flannel Barney", "Flannel Blue", "Flannel Tweed", "Fur Coat Ice", "Fur Coat Pistachio", "Fur Coat Purple", "Hoodie Black", "Hoodie Ice", "Hoodie Purple", "Hoodie White", "CAW Hoodie Black", "CAW Hoodie Purple", "CAW Hoodie White", "Sweater Black", "Sweater Duo", "Sweater Eggshell", "Sweater Ice", "Sweater Purple", "Sweater Purple Camo", "T-Shirt Crystal Ball", "T-Shirt Essential", "T-Shirt Flow", "T-Shirt GM", "T-Shirt Toly", "NY Sweater Black", "NY Sweater White", "Oversized T-Shirt Black", "Oversized T-Shirt Eggshell", "Oversized T-Shirt Grey", "Oversized T-Shirt Ice", "Oversized T-Shirt Purple", "Oversized T-Shirt White", "Vest Blue", "Vest Purple", "Vest White", "Prep Black", "Prep Eggshell", "Prep Ice Blue", "Prep Purple", "Prep Rose", "Puffer Black", "Puffer Gold", "Puffer Purple", "Puffer Wool", "Puffer Purple Camo", "Puffer Vest Black", "Puffer Vest Ice", "Puffer Vest Purple", "Puffer Vest Purple Camo", "Puffer Vest Wool", "Rugby Jersey Black", "Rugby Jersey Blue", "Rugby Jersey Pink", "Silicons FC - Alternate", "Silicons FC - Away", "Silicons FC - Home", "Two-Tone Black", "Two-Tone Blue", "Two-Tone Purple", "Two-Tone Rose", "V-Neck Black", "V-Neck Pistachio", "V-Neck White", "Varsity Jacket Black", "Varsity Jacket Tan", "Puffer Ice Fur", "Wool Puffer", "Wool Puffer Vest"];
     
         // alert("Got Outerwear!");
     }
@@ -649,12 +652,31 @@ function setLayerMasks(itemList, maskDict, current_layer)
         var layerNameFilter = item; // + " {";
 
         var trackMatteLayer = current_layer.layer(maskLayer);
+
+        // ----- Dirty fix for fur puffer and wool items -----
+        if (trackMatteLayer.name.indexOf("Puffer Vest Wool") >= 0)
+        {
+            alert("This is executed!");
+            layerNameFilter = "Wool Puffer Vest";
+        }
+
+        else if (trackMatteLayer.name.indexOf("Puffer Wool") >= 0)
+        {
+            alert("This is executed!");
+            layerNameFilter = "Wool Puffer";
+        }
+
+        else if (trackMatteLayer.name.indexOf("Puffer Fur") >= 0)
+        {
+            alert("This is executed!");
+            layerNameFilter = "Ice Fur Puffer";
+        }
         
         for (var j = 1; j <= current_layer.numLayers; j++)
         {
             var layer = current_layer.layer(j);
 
-            if (layer.name.indexOf(layerNameFilter) >= 0 && layer.name.indexOf("Comp Mask"))
+            if (layer.name.indexOf(layerNameFilter) >= 0 && layer.name.indexOf("Comp Mask") < 0)
             {
                 layer.setTrackMatte(trackMatteLayer, TrackMatteType.ALPHA);
             }
@@ -666,6 +688,7 @@ function setLayerMasks(itemList, maskDict, current_layer)
 // ----- ASSIGN MASKS -----
 for (var i = 1; i <= app.project.items.length; i++)
 {
+    // Get the precomp
     var precomp = app.project.items[i];
 
     if (precomp.name.split(" ").pop() == "Top" || precomp.name.split(" ").pop() == "Middle")
