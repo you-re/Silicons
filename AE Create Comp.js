@@ -20,9 +20,6 @@ var compAspect = 1.0;
 // framerate
 var compFR = 30;
 
-// Don't suppress dialogs
-app.endSuppressDialogs(true);
-
 // Setup a project
 function projectSetUp(scene_num)
 {
@@ -656,19 +653,19 @@ function setLayerMasks(itemList, maskDict, current_layer)
         // ----- Dirty fix for fur puffer and wool items -----
         if (trackMatteLayer.name.indexOf("Puffer Vest Wool") >= 0)
         {
-            alert("This is executed!");
+            // alert("This is executed!");
             layerNameFilter = "Wool Puffer Vest";
         }
 
         else if (trackMatteLayer.name.indexOf("Puffer Wool") >= 0)
         {
-            alert("This is executed!");
+            // alert("This is executed!");
             layerNameFilter = "Wool Puffer";
         }
 
         else if (trackMatteLayer.name.indexOf("Puffer Fur") >= 0)
         {
-            alert("This is executed!");
+            // alert("This is executed!");
             layerNameFilter = "Ice Fur Puffer";
         }
         
