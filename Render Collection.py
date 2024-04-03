@@ -23,7 +23,7 @@ headwear_materials = ["Fur Bucket Eggshell", "Fur Bucket Purple", "Fur Bucket Bl
 
 outerwear_items = ["Bomber Jacket", "Bowler", "Burnout", "Button Down", "CAW Hoodie", "Cardigan", "Denim Jacket", "Flannel", "Fur Coat", "Hoodie", "NY Sweater", "Oversized T-Shirt", "Prep", "Puffer Vest", "Puffer", "Rugby Jersey", "Silicons FC", "Sweater", "T-Shirt", "Two-Tone", "V-Neck", "Varsity Jacket", "Vest"]
 
-outerwear_materials = ["Bomber Jacket Black", "Bomber Jacket Tan", "Bowler Black", "Bowler Crochet", "Bowler Eggshell", "Burnout Black", "Burnout Carbon", "Burnout Purple", "Burnout Red", "Burnout White", "Button Down Black", "Button Down Blue", "Button Down White", "CAW Hoodie Black", "CAW Hoodie Purple", "CAW Hoodie White", "Cardigan Black", "Cardigan Ice", "Cardigan Purple", "Denim Jacket Black", "Denim Jacket Blue", "Denim Jacket Chess", "Denim Jacket Salt Pan", "Flannel Barney", "Flannel Blue", "Flannel Tweed", "Fur Coat Ice", "Fur Coat Pistachio", "Fur Coat Purple", "Hoodie Black", "Hoodie Ice", "Hoodie Purple", "Hoodie White", "NY Sweater Black", "NY Sweater White", "Oversized T-Shirt Black", "Oversized T-Shirt Eggshell", "Oversized T-Shirt Grey", "Oversized T-Shirt Ice", "Oversized T-Shirt Purple", "Oversized T-Shirt White", "Prep Black", "Prep Eggshell", "Prep Ice Blue", "Prep Purple", "Prep Rose", "Puffer Vest Black", "Puffer Vest Ice", "Puffer Vest Purple", "Puffer Vest Purple Camo", "Puffer Vest Wool", "Puffer Black", "Puffer Gold", "Puffer Ice Fur", "Puffer Purple", "Puffer Wool", "Puffer Purple Camo", "Rugby Jersey Black", "Rugby Jersey Blue", "Rugby Jersey Pink", "Silicons FC - Alternate", "Silicons FC - Away", "Silicons FC - Home", "Sweater Black", "Sweater Duo", "Sweater Eggshell", "Sweater Ice", "Sweater Purple", "Sweater Purple Camo", "T-Shirt Crystal Ball", "T-Shirt Essential", "T-Shirt Flow", "T-Shirt GM", "T-Shirt Toly", "Two-Tone Black", "Two-Tone Blue", "Two-Tone Purple", "Two-Tone Rose", "V-Neck Black", "V-Neck Pistachio", "V-Neck White", "Varsity Jacket Black", "Varsity Jacket Tan", "Vest Blue", "Vest Purple", "Vest White"]
+outerwear_materials = ["Bomber Jacket Black", "Bomber Jacket Tan", "Bowler Black", "Bowler Crochet", "Bowler Eggshell", "Burnout Black", "Burnout Carbon", "Burnout Purple", "Burnout Red", "Burnout White", "Button Down Black", "Button Down Blue", "Button Down White", "CAW Hoodie Black", "CAW Hoodie Purple", "CAW Hoodie White", "Cardigan Black", "Cardigan Ice", "Cardigan Purple", "Denim Jacket Black", "Denim Jacket Blue", "Denim Jacket Chess", "Denim Jacket Salt Pan", "Flannel Barney", "Flannel Blue", "Flannel Tweed", "Fur Coat Ice", "Fur Coat Pistachio", "Fur Coat Purple", "Hoodie Black", "Hoodie Ice", "Hoodie Purple", "Hoodie White", "NY Sweater Black", "NY Sweater White", "Oversized T-Shirt Black", "Oversized T-Shirt Eggshell", "Oversized T-Shirt Grey", "Oversized T-Shirt Ice", "Oversized T-Shirt Purple", "Oversized T-Shirt White", "Prep Black", "Prep Eggshell", "Prep Ice Blue", "Prep Purple", "Prep Rose", "Puffer Vest Black", "Puffer Vest Ice", "Puffer Vest Purple", "Puffer Vest Purple Camo", "Puffer Vest Wool", "Puffer Ice Fur", "Puffer Black", "Puffer Gold", "Puffer Purple", "Puffer Wool", "Puffer Purple Camo", "Rugby Jersey Black", "Rugby Jersey Blue", "Rugby Jersey Pink", "Silicons FC - Alternate", "Silicons FC - Away", "Silicons FC - Home", "Sweater Black", "Sweater Duo", "Sweater Eggshell", "Sweater Ice", "Sweater Purple", "Sweater Purple Camo", "T-Shirt Crystal Ball", "T-Shirt Essential", "T-Shirt Flow", "T-Shirt GM", "T-Shirt Toly", "Two-Tone Black", "Two-Tone Blue", "Two-Tone Purple", "Two-Tone Rose", "V-Neck Black", "V-Neck Pistachio", "V-Neck White", "Varsity Jacket Black", "Varsity Jacket Tan", "Vest Blue", "Vest Purple", "Vest White"]
 
 bottoms_items = ["Cargos", "Cargo Shorts", "Combat Shorts", "Front Pleats", "Joggers", "Jeans", "Skydivers", "Trousers"]
 
@@ -135,7 +135,7 @@ def sceneSwitch(switch_to_scene, scenes, switch_to_length, collections, scene_nu
     print("⋇⋆✦⋆⋇ Switched to %s scene ⋇⋆✦⋆⋇" %(scenes[scene_num]))
 
 # Render Backdrops
-def backdropRender(scene, output):
+def backdropRender(scene, output, overwrite):
     objects = ["Silicon Rig", "Silicon Skin", "Silicon Eyes"]
     # Hide all scene objects
     for object_name in objects:
@@ -161,6 +161,7 @@ def backdropRender(scene, output):
         bpy.context.scene.render.filepath = output_path
 
         # Render single frame
+        bpy.context.scene.render.use_overwrite = overwrite
         bpy.ops.render.render(animation = False, write_still = True)
     
 # Render functions
@@ -401,9 +402,13 @@ def outerwearRender(outerwear_items, outerwear_materials, scene_name, output, ov
             # Material comes before the item's name except when Silicons FC
             output_name = material_name.removeprefix(outerwear_name + " ") + " " + outerwear_name if outerwear_name != "Silicons FC" else material_name
 
+            # Check if material is Puffer Ice Fur
+            is_fur_puffer = True if (material_name == "Puffer Ice Fur") else False
+
             # Set fur to render if the item is puffer ice fur
-            if(material_name == "Puffer Ice Fur"):
+            if(is_fur_puffer):
                 outerwear_obj.modifiers["ParticleSystem"].show_render = True
+                is_fur_puffer = True
             
             # Set output path
             output_path = "%s/%s/Outerwear/%s ####" % (output, scene_name, output_name)
@@ -411,9 +416,11 @@ def outerwearRender(outerwear_items, outerwear_materials, scene_name, output, ov
             
             # Render!
             renderTime(overwrite, singleFrame, startFrame, endFrame)
+
             # Turn off the fur
-            if(material_name == "Puffer Ice Fur"):
-                outerwear_obj.modifiers["ParticleSystem"].show_render = False
+            if(is_fur_puffer):
+                bpy.data.objects["Puffer"].modifiers["ParticleSystem"].show_render = False
+                is_fur_puffer = False
             
             # Set material index to +1
             material_index = material_index + 1
@@ -858,7 +865,7 @@ def renderScenes(singleScene = False, startRange = 0, endRange = 4):
         # Switch to correct scene
         sceneSwitch(scene_name, scenes, scene_length, collections, scene_num)
 
-        backdropRender(scene_name, output_path)
+        backdropRender(scene_name, output_path, overwrite)
 
         # Hide cup if scene is GM
         if scene_name == "GM":
