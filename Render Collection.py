@@ -38,6 +38,16 @@ backdrop_materials = ["Aqua", "Blue", "Clouds", "Cream", "Green", "Orange", "Pin
 
 extra_objects = ["Cup GM"]
 
+# Recursively hide objects
+def recursivelyHide(obj, hide):
+    # Hide the object
+    obj.hide_render = hide
+    obj.hide_viewport = hide
+    # Iterate over all child objects of the current object
+    for child in obj.children:
+        # Recursively call the function for each child
+        recursivelyHide(child, hide)
+
 # Scene switching functions
 def shoesSwitch(switch_to_scene, scenes):
     objects = ["Shoes Collision Box L", "Shoes Collision Box R", "Crew Socks"]
@@ -55,27 +65,14 @@ def shoesSwitch(switch_to_scene, scenes):
         object.modifiers[armature_show].show_render = True
 
 def siliconSwitch(switch_to_scene, scenes):
-    objects = ["Silicon Rig", "Silicon Skin", "Silicon Eyes"]
-    # Hide all other scene objects
-    for object_name in objects:
-        for scene in scenes:
-            if scene == switch_to_scene:
-                object = bpy.data.objects[object_name + " " + scene]
-                object.hide_viewport = False
-                object.hide_render = False
-            else:
-                object = bpy.data.objects[object_name + " " + scene]
-                object.hide_viewport = True
-                object.hide_render = True
-
-    # Show / Hide cup
-    cup = bpy.data.objects["Cup GM"]
-    if switch_to_scene == "GM":
-        cup.hide_viewport = False
-        cup.hide_render = False
-    else:
-        cup.hide_viewport = True
-        cup.hide_render = True
+    for scene in scenes:
+        object = bpy.data.objects["Silicon Rig " + scene]
+        # Show objects from this scene
+        if scene == switch_to_scene:
+            recursivelyHide(object, False)
+        # Hide all other scene objects
+        else:
+            recursivelyHide(object, True)
 
 def hatsSwitch(switch_to_scene, scenes):
     # Get the collection
@@ -136,12 +133,11 @@ def sceneSwitch(switch_to_scene, scenes, switch_to_length, collections, scene_nu
 
 # Render Backdrops
 def backdropRender(scene, output, overwrite):
-    objects = ["Silicon Rig", "Silicon Skin", "Silicon Eyes"]
-    # Hide all scene objects
-    for object_name in objects:
-        for scene_name in scenes:
-            object = bpy.data.objects[object_name + " " + scene_name]
-            object.hide_render = True
+    object = bpy.data.objects["Silicon Rig " + scene]
+    for scene in scenes:
+        # Hide all other scene objects
+        recursivelyHide(object, True)
+    
     # Get the backdrop object
     backdrop = bpy.data.objects["Backdrop"]
 
