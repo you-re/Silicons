@@ -588,8 +588,13 @@ def bottomsRender(bottoms_items, bottoms_materials, scene_name, output, overwrit
     silicon_obj.data.materials[0] = bpy.data.materials["Skin Invisible"]
 
     # Activate mask object
-    # shoes_L_mask.hide_render = False
-    # shoes_R_mask.hide_render = False
+    shoes_L_mask.hide_render = False
+    shoes_R_mask.hide_render = False
+    shoes_L_mask.data.materials[0] = bpy.data.materials["Skin Invisible"]
+    shoes_R_mask.data.materials[0] = bpy.data.materials["Skin Invisible"]
+    
+    # Turn hands mask on
+    silicon_obj.modifiers["Hands Mask"].show_render = True
     
     # Render bottoms comp masks
     for bottoms_name in bottoms_items:
@@ -619,8 +624,11 @@ def bottomsRender(bottoms_items, bottoms_materials, scene_name, output, overwrit
         bottoms_obj.hide_render = True
 
     # Deactivate mask object
-    # shoes_L_mask.hide_render = True
-    # shoes_R_mask.hide_render = True
+    shoes_L_mask.hide_render = True
+    shoes_R_mask.hide_render = True
+
+    # Turn hands mask off
+    silicon_obj.modifiers["Hands Mask"].show_render = False
 
 def shoesRender(shoes_items, shoes_materials, scene_name, output, overwrite = False, singleFrame = False, startFrame = 1, endFrame = bpy.context.scene.frame_end):
     # Important objects
