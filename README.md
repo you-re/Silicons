@@ -14,4 +14,3 @@ Ment for setting up the scenes in AE:
  - it will ask you about the location of the renders. Specify the blender render output folder (should look something like "C:/Users/User/Silicons/silicons_render" (**Don't go into a specific scene yet!**)
  - next it will ask you what scene to import. Imput the scene name (example: "Strut Walk")
  - after the loading time (might take a minute or two) the scene should load and be properly set-up - you should be able to see one of the silicons
- - **MASKING ISN'T DONE YET! Some stuff might be broken.**
